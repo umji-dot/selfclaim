@@ -1,0 +1,1497 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>하나손해보험 렌터카 요청 v3 - Chat B</title>
+  <style>
+    :root {
+      --black: #202124;
+      --gray-1: #3A3A3A;
+      --gray-2: #747A82;
+      --gray-3: #B4B8BE;
+      --gray-4: #D9DCE0;
+      --gray-5: #ECEEF1;
+      --gray-6: #F7F7F7;
+      --white: #FFFFFF;
+      --primary: #009F9F;
+      --primary-point: rgba(0, 159, 159, 0.80);
+      --primary-box: rgba(0, 159, 159, 0.08);
+      --primary-light: rgba(0, 159, 159, 0.02);
+      --success: #3CC456;
+      --error: #FF5555;
+      --header-height: 81px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--gray-6); }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+      color: var(--black);
+      letter-spacing: 0;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      width: min(100%, 430px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding-top: var(--header-height);
+      background: var(--gray-6);
+      overflow: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      z-index: 30;
+      width: min(100%, 430px);
+      padding: 16px 24px 12px;
+      transform: translateX(-50%);
+      border-bottom: 1px solid var(--gray-5);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 32px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      display: block;
+      width: auto;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .vehicle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 6px 0 12px;
+      border-radius: 999px;
+      background: var(--primary-box);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .edit-car-btn {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--primary);
+    }
+
+    .edit-car-btn svg { width: 12px; height: 12px; stroke-width: 2.2; }
+    .is-hidden { display: none !important; }
+
+    .progress {
+      height: 4px;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--gray-5);
+    }
+    .progress span {
+      display: block;
+      width: 12%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--primary);
+      transition: width 0.25s ease;
+    }
+
+    main {
+      min-height: calc(100vh - var(--header-height));
+      padding: 20px 16px 96px;
+    }
+
+    .chat-log {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-log.is-focus-mode::after {
+      content: "";
+      display: block;
+      flex: 0 0 440px;
+    }
+
+    .message {
+      display: flex;
+      max-width: 88%;
+    }
+
+    .message.bot { align-self: flex-start; }
+    .message.user { align-self: flex-end; }
+
+    .bubble {
+      padding: 14px 16px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 23px;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+      box-shadow: 0 8px 22px rgba(32, 33, 36, 0.04);
+    }
+
+    .bot .bubble {
+      border-top-left-radius: 8px;
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .user .bubble {
+      border-top-right-radius: 8px;
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: none;
+    }
+
+    .typing {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 18px;
+    }
+    .typing i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gray-3);
+      animation: typing 0.9s ease-in-out infinite;
+    }
+    .typing i:nth-child(2) { animation-delay: 0.12s; }
+    .typing i:nth-child(3) { animation-delay: 0.24s; }
+    @keyframes typing {
+      0%, 80%, 100% { opacity: 0.35; transform: translateY(0); }
+      40% { opacity: 1; transform: translateY(-3px); }
+    }
+
+    .chat-panel {
+      width: 100%;
+      margin-top: 4px;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
+    }
+
+    .bottom-input-panel {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      z-index: 18;
+      width: min(calc(100% - 32px), 398px);
+      margin: 0;
+      transform: translateX(-50%);
+    }
+
+    .bottom-choice-panel {
+      position: static;
+      left: auto;
+      bottom: auto;
+      z-index: auto;
+      width: 100%;
+      margin-top: 4px;
+      transform: none;
+    }
+
+    .chat-panel.bottom-choice-panel,
+    .terms-section.bottom-choice-panel {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .panel-title {
+      margin: 0 0 14px;
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .field { margin-bottom: 14px; }
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+      color: var(--gray-1);
+    }
+
+    .input {
+      width: 100%;
+      height: 56px;
+      padding: 0 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--black);
+      font-size: 16px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .input::placeholder { color: var(--gray-3); font-weight: 400; }
+    .input:focus { border-color: var(--primary); }
+    textarea.input {
+      height: auto;
+      min-height: 92px;
+      padding: 14px 16px;
+      resize: none;
+      line-height: 22px;
+      font-weight: 500;
+    }
+
+    .primary-btn {
+      width: 100%;
+      height: 56px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--primary);
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .primary-btn:hover { background: var(--primary-point); }
+    .primary-btn:disabled {
+      background: var(--gray-4);
+      color: var(--white);
+      cursor: not-allowed;
+    }
+
+    .back-btn {
+      height: 56px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--gray-6);
+      color: var(--gray-1);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 30% 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .choice-btn {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 18px 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 16px;
+      background: var(--white);
+      color: var(--black);
+      text-align: left;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .choice-btn:hover,
+    .choice-btn.is-selected {
+      border-color: var(--primary);
+      background: var(--primary-box);
+    }
+
+    .choice-title {
+      display: block;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 700;
+    }
+    .choice-copy {
+      display: block;
+      margin-top: 2px;
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--gray-2);
+    }
+
+    .choice-check {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid var(--gray-4);
+      border-radius: 50%;
+      background: var(--white);
+      position: relative;
+    }
+    .choice-btn:hover .choice-check,
+    .choice-btn.is-selected .choice-check {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+    .choice-btn:hover .choice-check::after,
+    .choice-btn.is-selected .choice-check::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 3px;
+      width: 6px;
+      height: 10px;
+      border-right: 2px solid var(--white);
+      border-bottom: 2px solid var(--white);
+      transform: rotate(45deg);
+    }
+
+    .result-card,
+    .summary-card {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
+    }
+
+    .result-row,
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+    }
+    .result-row + .result-row,
+    .summary-row + .summary-row { border-top: 1px solid var(--gray-5); }
+    .result-label,
+    .summary-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-2);
+    }
+    .result-value,
+    .summary-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--black);
+      text-align: right;
+    }
+    .result-amount {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .select-field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 56px;
+      padding: 0 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--gray-3);
+      font-size: 16px;
+      font-weight: 500;
+      text-align: left;
+    }
+    .select-field.has-value { color: var(--black); font-weight: 700; }
+    .select-field::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid var(--gray-3);
+      border-bottom: 2px solid var(--gray-3);
+      transform: rotate(-45deg);
+      margin-left: 12px;
+    }
+
+    .shop-card {
+      display: block;
+      width: 100%;
+      padding: 18px 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 16px;
+      background: var(--white);
+      color: var(--black);
+      text-align: left;
+    }
+    .shop-card:hover,
+    .shop-card.is-selected {
+      border-color: var(--primary);
+      background: var(--primary-box);
+    }
+    .shop-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .shop-name { font-size: 16px; font-weight: 700; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: var(--primary-box);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .shop-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-2);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .chip {
+      height: 34px;
+      padding: 0 12px;
+      border: 1px solid var(--gray-4);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--gray-1);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .chip.is-active {
+      border-color: var(--primary);
+      background: var(--primary-box);
+      color: var(--primary);
+    }
+
+    .terms-section {
+      width: 100%;
+      margin-top: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
+    }
+    .terms-section-title {
+      margin: 0 0 12px;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 700;
+    }
+    .terms-total {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 52px;
+      padding: 0 16px;
+      border-radius: 12px;
+      background: var(--gray-6);
+      color: var(--black);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .terms-list { margin-top: 8px; padding: 0 4px; }
+    .terms-line {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      color: var(--gray-1);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .inline-check {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      border: 0;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .inline-check::after {
+      content: "";
+      width: 14px;
+      height: 8px;
+      border-left: 2px solid var(--gray-3);
+      border-bottom: 2px solid var(--gray-3);
+      transform: rotate(-45deg) translateY(-2px);
+    }
+    .inline-check:checked::after { border-color: var(--primary); }
+    .terms-open {
+      border: 0;
+      background: transparent;
+      color: var(--gray-2);
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .done {
+      width: 100%;
+      margin-top: 4px;
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--white);
+      text-align: left;
+      box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
+    }
+    .done-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      margin: 0 0 16px;
+      border-radius: 12px;
+      background: var(--primary-box);
+      color: var(--primary);
+    }
+    .done-icon svg { width: 22px; height: 22px; stroke-width: 2.5; }
+    .done h1 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 32px;
+      font-weight: 700;
+    }
+    .done p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 22px;
+      color: var(--gray-2);
+    }
+    .done-status {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--gray-5);
+    }
+    .done-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 32px;
+      font-size: 14px;
+    }
+    .done-status-row span:first-child {
+      color: var(--gray-2);
+      font-weight: 500;
+    }
+    .done-status-row strong {
+      color: var(--black);
+      font-weight: 700;
+    }
+
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .sheet-backdrop.is-open { display: flex; }
+
+    .bottom-sheet {
+      width: min(430px, 100%);
+      max-height: 82vh;
+      padding: 8px 20px 20px;
+      overflow: auto;
+      border-radius: 20px 20px 0 0;
+      background: var(--white);
+      animation: sheetUp 0.22s ease-out;
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      margin: 0 auto 18px;
+      border-radius: 999px;
+      background: var(--gray-4);
+    }
+    .sheet-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .sheet-head h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 30px;
+      font-weight: 700;
+    }
+    .sheet-close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--gray-2);
+      font-size: 22px;
+      line-height: 1;
+    }
+    .region-title {
+      margin: 0 0 10px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+    }
+    .region-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .region-chip {
+      height: 38px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: var(--gray-6);
+      color: var(--gray-1);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .region-chip.is-selected {
+      border-color: var(--primary);
+      background: var(--primary-box);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .city-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      border-top: 1px solid var(--gray-5);
+      color: var(--gray-1);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .city-row::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-right: 2px solid var(--gray-3);
+      border-top: 2px solid var(--gray-3);
+      transform: rotate(45deg);
+    }
+    .sheet-action {
+      position: sticky;
+      bottom: 0;
+      margin: 16px -20px 0;
+      padding: 12px 20px 4px;
+      background: linear-gradient(to top, var(--white) 70%, rgba(255, 255, 255, 0));
+    }
+
+    .vehicle-backdrop {
+      align-items: flex-start;
+      padding-top: 64px;
+    }
+    .vehicle-modal {
+      position: relative;
+      width: min(430px, 100%);
+      min-height: calc(100vh - 64px);
+      padding: 28px 24px;
+      border-radius: 20px 20px 0 0;
+      background: var(--white);
+      animation: sheetUp 0.22s ease-out;
+    }
+    .vehicle-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--gray-2);
+      font-size: 22px;
+      line-height: 1;
+    }
+    .vehicle-modal h2 {
+      margin: 28px 0 8px;
+      font-size: 22px;
+      line-height: 30px;
+      font-weight: 700;
+    }
+    .vehicle-modal p {
+      margin: 0 0 24px;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--gray-2);
+    }
+    .vehicle-field {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      padding: 12px 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 12px;
+      background: var(--white);
+    }
+    .vehicle-field.single { grid-template-columns: 1fr; }
+    .vehicle-field label {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 12px;
+      line-height: 15px;
+      font-weight: 600;
+      color: var(--gray-2);
+    }
+    .vehicle-input,
+    .vehicle-select {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--black);
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .vehicle-query {
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .vehicle-modal-actions {
+      position: sticky;
+      bottom: 0;
+      margin: 24px -24px 0;
+      padding: 12px 24px 24px;
+      background: linear-gradient(to top, var(--white) 70%, rgba(255, 255, 255, 0));
+    }
+
+    @media (max-width: 360px) {
+      main { padding-inline: 14px; }
+      .bubble { font-size: 14px; line-height: 22px; }
+      .region-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <img class="brand-logo" src="./logo_hana.png" alt="하나손해보험">
+        </div>
+        <div class="vehicle-pill is-hidden" id="headerVehicle">
+          <span id="headerCarNumber">12가1111</span>
+          <button class="edit-car-btn" id="editVehicleBtn" type="button" aria-label="차량번호 수정">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="progress" aria-label="진행률"><span id="progressBar"></span></div>
+    </header>
+
+    <main>
+      <section class="chat-log" id="chatLog" aria-live="polite"></section>
+    </main>
+
+    <div class="sheet-backdrop vehicle-backdrop" id="vehicleModal" aria-hidden="true">
+      <div class="vehicle-modal" role="dialog" aria-modal="true" aria-labelledby="vehicleModalTitle">
+        <button class="vehicle-close" id="vehicleClose" type="button" aria-label="닫기">×</button>
+        <h2 id="vehicleModalTitle">사고 차량 정보 조회를<br>완료했습니다.</h2>
+        <p>실제 사고 차량 정보와 일치하는지 확인하고<br>필요한 정보를 수정해 주세요.</p>
+
+        <div class="vehicle-field">
+          <div>
+            <label for="modalCarNumber">차량번호</label>
+            <input class="vehicle-input" id="modalCarNumber" value="12가1111">
+          </div>
+          <button class="vehicle-query" type="button">조회</button>
+        </div>
+        <div class="vehicle-field single">
+          <label for="modalCarName">차량명</label>
+          <input class="vehicle-input" id="modalCarName" value="셀토스">
+        </div>
+        <div class="vehicle-field single">
+          <label for="modalCarType">차량 규모</label>
+          <input class="vehicle-input" id="modalCarType" value="RV(SUV)">
+        </div>
+        <div class="vehicle-field single">
+          <label for="modalCc">배기량(cc)</label>
+          <select class="vehicle-select" id="modalCc">
+            <option value="">선택</option>
+            <option selected>1600~1999cc</option>
+            <option>2000cc 이상</option>
+          </select>
+        </div>
+        <div class="vehicle-field single">
+          <label for="modalYear">연식</label>
+          <select class="vehicle-select" id="modalYear">
+            <option>5년 이하</option>
+            <option selected>5년 초과</option>
+          </select>
+        </div>
+        <div class="vehicle-modal-actions">
+          <button class="primary-btn" id="vehicleSave" type="button">입력 완료</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-backdrop" id="regionSheet" aria-hidden="true">
+      <div class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="regionTitle">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+          <h2 id="regionTitle">어느 지역에서<br>받으실 건가요?</h2>
+          <button class="sheet-close" type="button" id="regionClose" aria-label="닫기">×</button>
+        </div>
+
+        <p class="region-title">서울특별시</p>
+        <div class="region-grid">
+          <button class="region-chip" type="button" data-region="서울특별시 강남구">강남구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 강동구">강동구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 강북구">강북구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 강서구">강서구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 관악구">관악구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 광진구">광진구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 구로구">구로구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 금천구">금천구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 노원구">노원구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 도봉구">도봉구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 동대문구">동대문구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 동작구">동작구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 마포구">마포구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 서대문구">서대문구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 서초구">서초구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 성동구">성동구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 성북구">성북구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 송파구">송파구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 양천구">양천구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 영등포구">영등포구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 용산구">용산구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 은평구">은평구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 종로구">종로구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 중구">중구</button>
+          <button class="region-chip" type="button" data-region="서울특별시 중랑구">중랑구</button>
+        </div>
+
+        <div class="city-row">부산광역시</div>
+        <div class="city-row">대구광역시</div>
+        <div class="city-row">인천광역시</div>
+
+        <div class="sheet-action">
+          <button class="primary-btn" id="regionConfirm" type="button" disabled>이 지역으로 선택</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chatLog = document.querySelector("#chatLog");
+    const progressBar = document.querySelector("#progressBar");
+    const headerVehicle = document.querySelector("#headerVehicle");
+    const headerCarNumber = document.querySelector("#headerCarNumber");
+    const editVehicleBtn = document.querySelector("#editVehicleBtn");
+    const vehicleModal = document.querySelector("#vehicleModal");
+    const vehicleClose = document.querySelector("#vehicleClose");
+    const vehicleSave = document.querySelector("#vehicleSave");
+    const modalCarNumber = document.querySelector("#modalCarNumber");
+    const modalCarName = document.querySelector("#modalCarName");
+    const modalCarType = document.querySelector("#modalCarType");
+    const regionSheet = document.querySelector("#regionSheet");
+    const regionClose = document.querySelector("#regionClose");
+    const regionConfirm = document.querySelector("#regionConfirm");
+
+    const state = {
+      step: 1,
+      carNumber: "",
+      carName: "셀토스",
+      carType: "SUV",
+      support: "rental",
+      area: "",
+      repairMode: "recommend",
+      repairShop: "광진 오토케어",
+      phone: "",
+      request: ""
+    };
+
+    const progressMap = {
+      1: "12%",
+      2: "28%",
+      3: "44%",
+      4: "56%",
+      5: "68%",
+      6: "68%",
+      7: "80%",
+      8: "92%",
+      9: "100%"
+    };
+
+    let activeUserReplyAnchor = null;
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    function userReplyOffset() {
+      const headerHeight = document.querySelector("header")?.offsetHeight || 81;
+      return headerHeight + 80;
+    }
+
+    function focusNode(node, offset = 104) {
+      if (!node) return;
+      requestAnimationFrame(() => {
+        const top = node.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+      });
+    }
+
+    function focusUserReply(node = activeUserReplyAnchor) {
+      if (!node) return;
+      focusNode(node.closest(".message") || node, userReplyOffset());
+    }
+
+    function scrollBottom() {
+      if (activeUserReplyAnchor) {
+        focusUserReply();
+        return;
+      }
+      requestAnimationFrame(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }));
+    }
+
+    function message(role, html) {
+      const item = document.createElement("div");
+      item.className = `message ${role}`;
+      item.innerHTML = `<div class="bubble">${html}</div>`;
+      chatLog.appendChild(item);
+      return item.querySelector(".bubble");
+    }
+
+    function botText(text, animate = false, onComplete) {
+      if (!animate) {
+        const bubble = message("bot", escapeHTML(text).replace(/\n/g, "<br>"));
+        onComplete?.();
+        return bubble;
+      }
+      const bubble = message("bot", '<span class="typing"><i></i><i></i><i></i></span>');
+      setTimeout(() => {
+        bubble.textContent = "";
+        let i = 0;
+        const timer = setInterval(() => {
+          bubble.textContent += text[i];
+          i += 1;
+          if (i >= text.length) {
+            clearInterval(timer);
+            onComplete?.();
+          }
+          scrollBottom();
+        }, 18);
+      }, 420);
+      return bubble;
+    }
+
+    function userText(text) {
+      activeUserReplyAnchor = message("user", escapeHTML(text));
+      return activeUserReplyAnchor;
+    }
+
+    function panel(html, className = "") {
+      const box = document.createElement("div");
+      box.className = `chat-panel ${className}`.trim();
+      box.innerHTML = html;
+      chatLog.appendChild(box);
+      scrollBottom();
+      return box;
+    }
+
+    function block(html, className = "") {
+      const node = document.createElement("div");
+      node.className = className;
+      node.innerHTML = html;
+      chatLog.appendChild(node);
+      scrollBottom();
+      return node;
+    }
+
+    function syncHeader() {
+      headerCarNumber.textContent = state.carNumber || "12가1111";
+      headerVehicle.classList.toggle("is-hidden", !state.carNumber);
+      modalCarNumber.value = state.carNumber || "12가1111";
+      modalCarName.value = state.carName;
+      modalCarType.value = `RV(${state.carType})`;
+    }
+
+    function resultCard() {
+      return block(`
+        <div class="result-row">
+          <span class="result-label">조회 차량</span>
+          <span class="result-value">${escapeHTML(state.carName)} · ${escapeHTML(state.carType)}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">예상 교통비</span>
+          <span class="result-amount">32,000원</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">렌터카</span>
+          <span class="result-value">신청 가능</span>
+        </div>
+      `, "result-card");
+    }
+
+    function commonIntro(animated = false, onComplete) {
+      if (!animated) {
+        botText("고객님, 갑작스러운 사고로 많이 놀라셨죠?");
+        botText("차량번호만 입력하면 렌터카와 교통비 지원 가능 여부를 바로 확인해드릴게요.");
+        onComplete?.();
+        return;
+      }
+      botText("고객님, 갑작스러운 사고로 많이 놀라셨죠?", true, () => {
+        botText("차량번호만 입력하면 렌터카와 교통비 지원 가능 여부를 바로 확인해드릴게요.", true, onComplete);
+      });
+    }
+
+    function render(step, animated = false) {
+      state.step = Number(step);
+      chatLog.innerHTML = "";
+      activeUserReplyAnchor = null;
+      progressBar.style.width = progressMap[state.step] || "12%";
+      syncHeader();
+      chatLog.classList.toggle("is-focus-mode", state.step === 2);
+
+      if (state.step === 1) {
+        commonIntro(animated, renderCarLookup);
+      }
+      if (state.step === 2) {
+        commonIntro(false);
+        const replyNode = userText(state.carNumber);
+        resultCard();
+        focusUserReply(replyNode);
+        setTimeout(() => renderSupportChoice(true), 520);
+        return;
+      }
+      if (state.step >= 3) {
+        commonIntro(false);
+        userText(state.carNumber);
+        resultCard();
+      }
+      if (state.step >= 3) {
+        userText(state.support === "rental" ? "렌터카 받을래요" : "교통비 받을래요");
+      }
+      if (state.step === 3) renderAreaChoice();
+      if (state.step >= 4) {
+        userText(state.area || "서울특별시 강남구");
+      }
+      if (state.step === 4 && state.support === "rental") renderRepairMode();
+      if (state.step === 4 && state.support === "traffic") renderContact();
+      if (state.step >= 5 && state.support === "rental") {
+        userText(state.repairMode === "recommend" ? "가까운 수리점 추천받을게요" : "수리점은 이미 정했어요");
+      }
+      if (state.step === 5) renderShopRecommend();
+      if (state.step === 6) renderShopDirect();
+      if (state.step >= 7 && state.support === "rental") {
+        userText(state.repairShop);
+      }
+      if (state.step === 7) renderContact();
+      if (state.step >= 8) {
+        userText(state.phone || "010-1234-5678");
+      }
+      if (state.step === 8) renderFinal();
+      if (state.step === 9) renderDone();
+      scrollBottom();
+    }
+
+    function renderCarLookup() {
+      const box = panel(`
+        <div class="field">
+          <label class="field-label" for="carNumber">차량번호</label>
+          <input class="input" id="carNumber" placeholder="예) 123가0000" inputmode="text" autocomplete="off">
+        </div>
+        <button class="primary-btn" id="lookupBtn" type="button" disabled>차량 조회하기</button>
+      `, "bottom-input-panel");
+      const input = box.querySelector("#carNumber");
+      const btn = box.querySelector("#lookupBtn");
+      input.value = state.carNumber;
+      input.addEventListener("input", () => { btn.disabled = input.value.trim().length === 0; });
+      btn.disabled = input.value.trim().length === 0;
+      btn.addEventListener("click", () => {
+        state.carNumber = input.value.trim();
+        render(2);
+      });
+    }
+
+    function renderSupportChoice(animate = false) {
+      botText("수리 기간 동안 어떤 지원이 필요하세요?", animate, () => {
+        const box = panel(`
+        <div class="choice-list">
+          <button class="choice-btn" type="button" data-support="rental">
+            <span>
+              <span class="choice-title">렌터카 받을래요</span>
+              <span class="choice-copy">가까운 업체와 빠르게 매칭</span>
+            </span>
+            <span class="choice-check"></span>
+          </button>
+          <button class="choice-btn" type="button" data-support="traffic">
+            <span>
+              <span class="choice-title">교통비 받을래요</span>
+              <span class="choice-copy">차량 없이 비용으로 지원</span>
+            </span>
+            <span class="choice-check"></span>
+          </button>
+        </div>
+      `, "bottom-choice-panel");
+        box.querySelectorAll("[data-support]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            box.querySelectorAll("[data-support]").forEach((item) => item.classList.remove("is-selected"));
+            btn.classList.add("is-selected");
+            state.support = btn.dataset.support;
+            setTimeout(() => render(3), 260);
+          });
+        });
+        focusUserReply();
+      });
+    }
+
+    function renderAreaChoice() {
+      botText(state.support === "rental"
+        ? "렌터카를 받을 지역을 알려주세요. 배송 가능한 가까운 업체를 우선으로 찾아드릴게요."
+        : "교통비 지원 산정을 위해 사고 지역을 알려주세요.", true, () => {
+        const box = panel(`
+        <button class="select-field ${state.area ? "has-value" : ""}" id="areaSelect" type="button">
+          ${state.area || "지역 선택"}
+        </button>
+      `, "bottom-choice-panel");
+        box.querySelector("#areaSelect").addEventListener("click", openRegionSheet);
+        focusUserReply();
+      });
+    }
+
+    function renderRepairMode() {
+      botText("차량 수리점은 정해지셨나요?", true, () => {
+        const box = panel(`
+        <div class="choice-list">
+          <button class="choice-btn" type="button" data-repair="recommend">
+            <span>
+              <span class="choice-title">아직 못 정했어요</span>
+              <span class="choice-copy">근처 우수 수리점 추천</span>
+            </span>
+            <span class="choice-check"></span>
+          </button>
+          <button class="choice-btn" type="button" data-repair="direct">
+            <span>
+              <span class="choice-title">이미 정했어요</span>
+              <span class="choice-copy">수리점명만 전달</span>
+            </span>
+            <span class="choice-check"></span>
+          </button>
+        </div>
+      `, "bottom-choice-panel");
+        box.querySelectorAll("[data-repair]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            box.querySelectorAll("[data-repair]").forEach((item) => item.classList.remove("is-selected"));
+            btn.classList.add("is-selected");
+            state.repairMode = btn.dataset.repair;
+            setTimeout(() => render(state.repairMode === "recommend" ? 5 : 6), 260);
+          });
+        });
+        focusUserReply();
+      });
+    }
+
+    function renderShopRecommend() {
+      botText(`${state.area || "선택하신 지역"} 근처 우수 수리점 2곳을 찾았어요.`, true, () => {
+        const box = panel(`
+        <div class="choice-list">
+          <button class="shop-card" type="button" data-shop="광진 오토케어">
+            <span class="shop-head">
+              <span class="shop-name">광진 오토케어</span>
+              <span class="badge">보험사 인증</span>
+            </span>
+            <span class="shop-meta"><span>1.2km</span><span>국산차 전문</span><span>오늘 접수 가능</span></span>
+          </button>
+          <button class="shop-card" type="button" data-shop="건대 카닥터">
+            <span class="shop-head">
+              <span class="shop-name">건대 카닥터</span>
+              <span class="badge">보험사 인증</span>
+            </span>
+            <span class="shop-meta"><span>2.1km</span><span>차체 수리</span><span>내일 오전 가능</span></span>
+          </button>
+        </div>
+      `, "bottom-choice-panel");
+        box.querySelectorAll("[data-shop]").forEach((card) => {
+          card.addEventListener("click", () => {
+            box.querySelectorAll("[data-shop]").forEach((item) => item.classList.remove("is-selected"));
+            card.classList.add("is-selected");
+            state.repairShop = card.dataset.shop;
+            setTimeout(() => render(7), 260);
+          });
+        });
+        focusUserReply();
+      });
+    }
+
+    function renderShopDirect() {
+      botText("정해진 수리점명을 입력해 주세요. 업체에게 바로 전달할게요.", true, () => {
+        const box = panel(`
+        <div class="field">
+          <label class="field-label" for="repairShopInput">수리점명</label>
+          <input class="input" id="repairShopInput" placeholder="예) 광진 오토케어" autocomplete="off">
+        </div>
+        <button class="primary-btn" id="directNext" type="button" disabled>입력 완료</button>
+      `, "bottom-choice-panel");
+        const input = box.querySelector("#repairShopInput");
+        const next = box.querySelector("#directNext");
+        input.value = state.repairShop === "광진 오토케어" ? "" : state.repairShop;
+        input.addEventListener("input", () => { next.disabled = input.value.trim().length === 0; });
+        next.disabled = input.value.trim().length === 0;
+        next.addEventListener("click", () => {
+          state.repairShop = input.value.trim();
+          render(7);
+        });
+        focusUserReply();
+      });
+    }
+
+    function renderContact() {
+      botText("연락처를 인증하고 요청사항이 있으면 남겨주세요.", true, () => {
+        const box = panel(`
+        <div class="field">
+          <label class="field-label" for="phoneInput">연락처</label>
+          <input class="input" id="phoneInput" placeholder="010-1234-5678" inputmode="tel" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label class="field-label" for="requestInput">요청사항</label>
+          <textarea class="input" id="requestInput" placeholder="요청사항이 있으면 입력해 주세요."></textarea>
+          <div class="chips">
+            <button class="chip" type="button" data-chip="빠른 배차 부탁드려요">빠른 배차</button>
+            <button class="chip" type="button" data-chip="금연 차량이면 좋겠어요">금연 차량</button>
+            <button class="chip" type="button" data-chip="문자로 먼저 연락 주세요">문자 연락</button>
+          </div>
+        </div>
+        <button class="primary-btn" id="contactNext" type="button" disabled>입력 완료</button>
+      `, "bottom-choice-panel");
+        const phone = box.querySelector("#phoneInput");
+        const req = box.querySelector("#requestInput");
+        const next = box.querySelector("#contactNext");
+        phone.value = state.phone;
+        req.value = state.request;
+        phone.addEventListener("input", () => { next.disabled = phone.value.trim().length === 0; });
+        box.querySelectorAll("[data-chip]").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            chip.classList.toggle("is-active");
+            const text = chip.dataset.chip;
+            if (!req.value.includes(text)) req.value = req.value ? `${req.value}\n${text}` : text;
+          });
+        });
+        next.disabled = phone.value.trim().length === 0;
+        next.addEventListener("click", () => {
+          state.phone = phone.value.trim();
+          state.request = req.value.trim();
+          render(8);
+        });
+        focusUserReply();
+      });
+    }
+
+    function renderFinal() {
+      botText("마지막으로 신청 내용을 확인해 주세요.", true, () => {
+        const summary = block(`
+        <div class="summary-row">
+          <span class="summary-label">차량</span>
+          <span class="summary-value">${escapeHTML(state.carNumber)} · ${escapeHTML(state.carName)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">신청</span>
+          <span class="summary-value">${state.support === "rental" ? "렌터카" : "교통비"}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">지역</span>
+          <span class="summary-value">${escapeHTML(state.area || "서울특별시 강남구")}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">수리점</span>
+          <span class="summary-value">${state.support === "rental" ? escapeHTML(state.repairShop) : "해당 없음"}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">연락처</span>
+          <span class="summary-value">${escapeHTML(state.phone || "010-1234-5678")}</span>
+        </div>
+      `, "summary-card");
+        focusUserReply();
+
+        setTimeout(() => {
+          const terms = block(`
+        <h2 class="terms-section-title">약관에 동의해 주세요</h2>
+        <label class="terms-total">
+          <input class="inline-check" id="termsAll" type="checkbox">
+          <span>전체 동의</span>
+        </label>
+        <div class="terms-list">
+          <label class="terms-line">
+            <input class="inline-check term-item" type="checkbox">
+            <span>[필수] 만 21세 이상입니다.</span>
+            <button class="terms-open" type="button">보기</button>
+          </label>
+          <label class="terms-line">
+            <input class="inline-check term-item" type="checkbox">
+            <span>[필수] 렌터카 이용약관 및 개인정보 처리방침 동의</span>
+            <button class="terms-open" type="button">보기</button>
+          </label>
+          <label class="terms-line">
+            <input class="inline-check term-item" type="checkbox">
+            <span>[필수] 이용 제한 안내 확인</span>
+            <button class="terms-open" type="button">보기</button>
+          </label>
+        </div>
+        <button class="primary-btn" id="submitBtn" type="button" disabled>${state.support === "rental" ? "렌터카 신청 완료" : "교통비 신청 완료"}</button>
+      `, "terms-section bottom-choice-panel");
+          const all = terms.querySelector("#termsAll");
+          const items = [...terms.querySelectorAll(".term-item")];
+          const submit = terms.querySelector("#submitBtn");
+          const update = () => {
+            const checked = items.every((item) => item.checked);
+            all.checked = checked;
+            submit.disabled = !checked;
+          };
+          all.addEventListener("change", () => {
+            items.forEach((item) => { item.checked = all.checked; });
+            update();
+          });
+          items.forEach((item) => item.addEventListener("change", update));
+          submit.addEventListener("click", () => render(9));
+          focusUserReply();
+        }, 260);
+      });
+    }
+
+    function renderDone() {
+      block(`
+        <div class="done-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M5 12l4 4 10-10" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        <h1>${state.support === "rental" ? "렌터카 신청이" : "교통비 신청이"} 완료되었어요</h1>
+        <p>평균 3분 내 진행 상황을 알림으로 보내드릴게요.</p>
+        <div class="done-status">
+          <div class="done-status-row">
+            <span>진행 상태</span>
+            <strong>${state.support === "rental" ? "업체 매칭 중" : "교통비 산정 중"}</strong>
+          </div>
+          <div class="done-status-row">
+            <span>예상 안내</span>
+            <strong>3분 이내</strong>
+          </div>
+        </div>
+      `, "done");
+    }
+
+    function openRegionSheet() {
+      regionSheet.classList.add("is-open");
+      regionSheet.setAttribute("aria-hidden", "false");
+    }
+
+    function closeRegionSheet() {
+      regionSheet.classList.remove("is-open");
+      regionSheet.setAttribute("aria-hidden", "true");
+    }
+
+    let pendingArea = "";
+    document.querySelectorAll("[data-region]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-region]").forEach((item) => item.classList.remove("is-selected"));
+        button.classList.add("is-selected");
+        pendingArea = button.dataset.region;
+        regionConfirm.disabled = false;
+      });
+    });
+    regionConfirm.addEventListener("click", () => {
+      if (!pendingArea) return;
+      state.area = pendingArea;
+      closeRegionSheet();
+      render(4);
+    });
+    regionClose.addEventListener("click", closeRegionSheet);
+    regionSheet.addEventListener("click", (event) => {
+      if (event.target === regionSheet) closeRegionSheet();
+    });
+
+    function openVehicleModal() {
+      syncHeader();
+      vehicleModal.classList.add("is-open");
+      vehicleModal.setAttribute("aria-hidden", "false");
+    }
+    function closeVehicleModal() {
+      vehicleModal.classList.remove("is-open");
+      vehicleModal.setAttribute("aria-hidden", "true");
+    }
+    editVehicleBtn.addEventListener("click", openVehicleModal);
+    vehicleClose.addEventListener("click", closeVehicleModal);
+    vehicleModal.addEventListener("click", (event) => {
+      if (event.target === vehicleModal) closeVehicleModal();
+    });
+    vehicleSave.addEventListener("click", () => {
+      const typeMatch = modalCarType.value.match(/\((.*?)\)/);
+      state.carNumber = modalCarNumber.value.trim() || state.carNumber || "12가1111";
+      state.carName = modalCarName.value.trim() || state.carName;
+      state.carType = typeMatch?.[1] || modalCarType.value.trim() || state.carType;
+      syncHeader();
+      closeVehicleModal();
+      render(state.step);
+    });
+
+    render(1, true);
+  </script>
+</body>
+</html>
