@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>하나손해보험 렌터카 요청 v3 - Chat B</title>
+  <title>DB손해보험 렌터카 요청 v3 - Chat B</title>
   <style>
     :root {
       --black: #202124;
@@ -14,10 +14,10 @@
       --gray-5: #ECEEF1;
       --gray-6: #F7F7F7;
       --white: #FFFFFF;
-      --primary: #009F9F;
-      --primary-point: rgba(0, 159, 159, 0.80);
-      --primary-box: rgba(0, 159, 159, 0.08);
-      --primary-light: rgba(0, 159, 159, 0.02);
+      --primary: #008449;
+      --primary-point: rgba(0, 132, 73, 0.80);
+      --primary-box: rgba(0, 132, 73, 0.08);
+      --primary-light: rgba(0, 132, 73, 0.02);
       --success: #3CC456;
       --error: #FF5555;
       --header-height: 81px;
@@ -141,8 +141,14 @@
       display: flex;
       max-width: 88%;
     }
+    .message.message-wide {
+      width: 100%;
+      max-width: 100%;
+    }
 
-    .message.bot { align-self: flex-start; }
+    .message.bot {
+      align-self: flex-start;
+    }
     .message.user { align-self: flex-end; }
 
     .bubble {
@@ -154,6 +160,7 @@
       overflow-wrap: anywhere;
       box-shadow: 0 8px 22px rgba(32, 33, 36, 0.04);
     }
+    .message.message-wide .bubble { width: 100%; }
 
     .bot .bubble {
       border-top-left-radius: 8px;
@@ -223,6 +230,71 @@
       margin-top: 4px;
     }
 
+    .support-bottom-sheet {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      z-index: 18;
+      width: min(calc(100% - 32px), 398px);
+      margin: 0;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(247, 247, 247, 0.96);
+      transform: translateX(-50%);
+      box-shadow: 0 18px 42px rgba(32, 33, 36, 0.12);
+      animation: supportSheetUp 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    @keyframes supportSheetUp {
+      from { opacity: 0; transform: translate(-50%, 28px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .support-bottom-sheet .bubble-choice-list {
+      gap: 10px;
+      margin-top: 0;
+    }
+
+    .support-bottom-sheet .bubble-choice-btn {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      align-items: center;
+      min-height: 78px;
+      padding: 16px;
+      border: 0;
+      border-radius: 16px;
+      background: var(--white);
+      box-shadow: 0 8px 22px rgba(32, 33, 36, 0.06);
+    }
+
+    .support-bottom-sheet .bubble-choice-btn:hover,
+    .support-bottom-sheet .bubble-choice-btn.is-selected {
+      background: var(--white);
+      box-shadow: 0 10px 26px rgba(0, 132, 73, 0.12);
+    }
+
+    .support-choice-icon {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--primary-box);
+      color: var(--primary);
+    }
+    .support-choice-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .support-choice-text {
+      min-width: 0;
+    }
+
     .panel-title {
       margin: 0 0 14px;
       font-size: 15px;
@@ -256,6 +328,7 @@
     }
     .input::placeholder { color: var(--gray-3); font-weight: 400; }
     .input:focus { border-color: var(--primary); }
+    .input.is-verified { border-color: var(--success); }
     textarea.input {
       height: auto;
       min-height: 92px;
@@ -281,6 +354,17 @@
       background: var(--gray-4);
       color: var(--white);
       cursor: not-allowed;
+    }
+    .secondary-btn {
+      width: 100%;
+      height: 56px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--gray-5);
+      color: var(--gray-1);
+      font-size: 16px;
+      font-weight: 700;
     }
 
     .back-btn {
@@ -365,6 +449,116 @@
       border-bottom: 2px solid var(--white);
       transform: rotate(45deg);
     }
+    .bubble-action-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .bubble-action-btn {
+      display: grid;
+      place-items: center;
+      min-height: 56px;
+      padding: 0 16px;
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--primary);
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 700;
+      white-space: nowrap;
+      word-break: keep-all;
+      text-align: center;
+    }
+    .bubble-action-btn:hover,
+    .bubble-action-btn.is-active {
+      border-color: var(--primary);
+      background: var(--primary-box);
+      color: var(--primary);
+    }
+    .bubble-choice-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .bubble-choice-btn {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 64px;
+      padding: 14px 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--black);
+      text-align: left;
+    }
+    .bubble-choice-btn:hover,
+    .bubble-choice-btn.is-selected {
+      border-color: var(--primary);
+      background: var(--primary-box);
+    }
+    .bubble-choice-title {
+      display: block;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 800;
+    }
+    .bubble-choice-copy {
+      display: block;
+      margin-top: 3px;
+      color: var(--gray-2);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+    .bubble-form {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .bubble-form .field { margin-bottom: 0; }
+    .auth-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .auth-side-btn {
+      min-width: 86px;
+      height: 56px;
+      padding: 0 14px;
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .auth-side-btn:disabled {
+      border-color: var(--gray-4);
+      color: var(--gray-3);
+      cursor: not-allowed;
+    }
+    .auth-meta {
+      display: none;
+      margin: 2px 0 0;
+      color: var(--gray-2);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 600;
+    }
+    .auth-message {
+      min-height: 18px;
+      margin: 2px 0 0;
+      color: var(--gray-2);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+    .auth-message.is-success { color: var(--success); }
 
     .result-card,
     .summary-card {
@@ -373,6 +567,20 @@
       border-radius: 12px;
       background: var(--white);
       box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
+    }
+    .result-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 10px;
+    }
+    .result-title {
+      margin: 0;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 800;
+      color: var(--black);
     }
 
     .result-row,
@@ -398,10 +606,283 @@
       color: var(--black);
       text-align: right;
     }
+    .summary-value-group {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 0;
+    }
+    .summary-edit {
+      flex: 0 0 auto;
+      height: 26px;
+      padding: 0 8px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--primary-box);
+      color: var(--primary);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 700;
+    }
+    .summary-edit:hover { background: rgba(0, 132, 73, 0.14); }
+    .summary-actions {
+      display: grid;
+      gap: 8px;
+      margin-top: 24px;
+    }
     .result-amount {
       font-size: 20px;
       font-weight: 700;
       color: var(--primary);
+    }
+    .result-edit-btn {
+      flex: 0 0 auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      box-shadow: none;
+    }
+
+    .traffic-form {
+      display: grid;
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .native-select {
+      width: 100%;
+      height: 56px;
+      padding: 0 40px 0 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--black);
+      font-size: 16px;
+      font-weight: 700;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--gray-3) 50%),
+        linear-gradient(135deg, var(--gray-3) 50%, transparent 50%);
+      background-position: calc(100% - 18px) 24px, calc(100% - 12px) 24px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+    .native-select:invalid {
+      color: var(--gray-3);
+      font-weight: 500;
+    }
+    .field-hint {
+      margin: 12px 0 0;
+      color: var(--gray-2);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    .fault-card {
+      padding: 18px 16px 14px;
+      border-radius: 12px;
+      background: var(--gray-6);
+    }
+    .fault-value {
+      margin: 0 0 18px;
+      color: var(--black);
+      font-size: 28px;
+      line-height: 34px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .fault-value.is-placeholder {
+      color: var(--primary);
+      font-size: 20px;
+      line-height: 28px;
+    }
+    .fault-range {
+      width: 100%;
+      height: 10px;
+      margin: 0;
+      accent-color: var(--primary);
+    }
+    .fault-range::-webkit-slider-runnable-track {
+      height: 8px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--gray-5);
+    }
+    .fault-range::-webkit-slider-thumb {
+      width: 22px;
+      height: 22px;
+      margin-top: -7px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--primary);
+      appearance: none;
+    }
+    .fault-range::-moz-range-track {
+      height: 8px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--gray-5);
+    }
+    .fault-range::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .fault-range-labels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 8px;
+      color: var(--gray-2);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    .fault-range-labels span:nth-child(2) { text-align: center; }
+    .fault-range-labels span:nth-child(3) { text-align: right; }
+
+    .cost-estimate-card {
+      width: 100%;
+      padding: 18px 16px;
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
+    }
+    .cost-result-title {
+      margin: 0 0 12px;
+      color: var(--black);
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 800;
+    }
+    .cost-estimate-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      color: var(--gray-1);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 700;
+    }
+    .cost-estimate-row + .cost-estimate-row,
+    .cost-main { border-top: 1px solid var(--gray-5); }
+    .cost-main {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 12px;
+      padding: 18px 0;
+    }
+    .cost-title {
+      display: block;
+      color: var(--black);
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 800;
+    }
+    .cost-sub {
+      display: block;
+      margin-top: 2px;
+      color: var(--gray-2);
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+    .cost-amount {
+      color: var(--primary);
+      font-size: 28px;
+      line-height: 34px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .cost-notes {
+      margin: 0;
+      padding: 14px 0 0 16px;
+      border-top: 1px solid var(--gray-5);
+      color: var(--gray-1);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    .rental-history {
+      width: 100%;
+      margin-top: 14px;
+      padding: 18px 16px;
+      border-radius: 12px;
+      background: var(--white);
+      box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
+    }
+    .rental-history h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 800;
+      color: var(--black);
+    }
+    .rental-history-list {
+      padding: 0;
+      border-radius: 12px;
+      background: var(--white);
+    }
+    .rental-history-item {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .rental-history-item + .rental-history-item { border-top: 1px solid var(--gray-5); }
+    .rental-history-rank {
+      color: var(--primary);
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 800;
+    }
+    .rental-history-name {
+      display: block;
+      color: var(--black);
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 800;
+    }
+    .rental-history-desc {
+      display: block;
+      margin-top: 2px;
+      color: var(--gray-2);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+    .rental-history-note {
+      margin: 10px 0 0;
+      padding-top: 10px;
+      border-top: 1px solid var(--gray-5);
+      color: var(--gray-1);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+    .cost-actions {
+      width: 100%;
+      margin-top: 14px;
+    }
+    .cost-only-btn {
+      width: 100%;
+      height: 50px;
+      margin-top: 8px;
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--primary);
+      font-size: 15px;
+      font-weight: 800;
     }
 
     .select-field {
@@ -473,6 +954,160 @@
       font-weight: 500;
       color: var(--gray-2);
     }
+    .factory-search {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .factory-location-line {
+      color: var(--gray-1);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 500;
+    }
+    .factory-location-line strong {
+      color: var(--black);
+      font-weight: 800;
+    }
+    .radius-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .radius-chip {
+      height: 36px;
+      border: 1px solid var(--gray-4);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--gray-1);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .radius-chip.is-active {
+      border-color: var(--primary);
+      background: var(--primary-box);
+      color: var(--primary);
+    }
+    .factory-notice {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--primary-box);
+      color: var(--gray-1);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    .factory-list {
+      display: grid;
+      gap: 10px;
+    }
+    .factory-sheet {
+      max-height: 88vh;
+      padding-bottom: 18px;
+    }
+    .factory-sheet .factory-search { margin-bottom: 16px; }
+    .factory-sheet.is-region-search .radius-list { display: none; }
+    .factory-card {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--gray-4);
+      border-radius: 16px;
+      background: var(--white);
+      color: var(--black);
+      text-align: left;
+      transition: border-color 0.15s ease, background 0.15s ease;
+      overflow: hidden;
+    }
+    .factory-card:hover,
+    .factory-card.is-selected {
+      border-color: var(--primary);
+      background: var(--primary-box);
+    }
+    .factory-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+    .factory-title-block {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .factory-name {
+      display: block;
+      font-size: 16px;
+      line-height: 23px;
+      font-weight: 800;
+      color: var(--black);
+    }
+    .factory-grade {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 700;
+      color: var(--gray-2);
+    }
+    .factory-reserve {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      min-width: 66px;
+      height: 34px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--primary);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .factory-body {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 12px;
+      color: var(--gray-1);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    .factory-benefits {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 6px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .benefit-chip {
+      display: inline-flex;
+      align-items: center;
+      flex: 0 0 auto;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--gray-6);
+      color: var(--gray-1);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .recommend-reasons {
+      display: none;
+    }
+    .reason-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--gray-6);
+      color: var(--gray-1);
+      font-size: 12px;
+      font-weight: 600;
+    }
 
     .chips {
       display: flex;
@@ -504,6 +1139,10 @@
       background: var(--white);
       box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
     }
+    .terms-inline {
+      margin-top: 14px;
+    }
+    .terms-inline .primary-btn { margin-top: 24px; }
     .terms-section-title {
       margin: 0 0 12px;
       font-size: 16px;
@@ -618,6 +1257,74 @@
       color: var(--black);
       font-weight: 700;
     }
+    .done-note {
+      margin-top: 14px;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--gray-2);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 400;
+    }
+    .process-info {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+      margin-top: 18px;
+      text-align: left;
+    }
+    .process-step {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--gray-6);
+    }
+    .process-icon {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--primary-box);
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .process-copy strong {
+      display: block;
+      color: var(--black);
+      font-size: 14px;
+      line-height: 21px;
+      font-weight: 800;
+    }
+    .process-copy span {
+      display: block;
+      color: var(--gray-2);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    .done-summary {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .done-summary-group {
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: var(--gray-6);
+    }
+    .done-summary-title {
+      margin: 0 0 8px;
+      color: var(--black);
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 800;
+    }
 
     .sheet-backdrop {
       position: fixed;
@@ -727,17 +1434,23 @@
     }
 
     .vehicle-backdrop {
-      align-items: flex-start;
-      padding-top: 64px;
+      align-items: center;
+      padding: 16px;
     }
     .vehicle-modal {
       position: relative;
       width: min(430px, 100%);
-      min-height: calc(100vh - 64px);
-      padding: 28px 24px;
-      border-radius: 20px 20px 0 0;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+      padding: 28px 24px 24px;
+      border-radius: 20px;
       background: var(--white);
-      animation: sheetUp 0.22s ease-out;
+      box-shadow: 0 24px 60px rgba(32, 33, 36, 0.2);
+      animation: modalPop 0.2s ease-out;
+    }
+    @keyframes modalPop {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .vehicle-close {
       position: absolute;
@@ -804,11 +1517,22 @@
       text-underline-offset: 2px;
     }
     .vehicle-modal-actions {
-      position: sticky;
-      bottom: 0;
-      margin: 24px -24px 0;
-      padding: 12px 24px 24px;
-      background: linear-gradient(to top, var(--white) 70%, rgba(255, 255, 255, 0));
+      margin-top: 24px;
+    }
+
+
+    .support-bottom-sheet .bubble-choice-btn::after { content: none; }
+    .support-bottom-sheet .bubble-choice-copy { color: var(--gray-2); font-weight: 500; }
+    .result-card-detail .result-edit-btn { margin-top: 0; }
+    .bubble-action-grid .bubble-action-btn { min-height: 52px; }
+    .done .process-info svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     @media (max-width: 360px) {
@@ -823,7 +1547,7 @@
     <header>
       <div class="topbar">
         <div class="brand">
-          <img class="brand-logo" src="./logo_hana.png" alt="하나손해보험">
+          <img class="brand-logo" src="./logo_db.png" alt="DB손해보험">
         </div>
         <div class="vehicle-pill is-hidden" id="headerVehicle">
           <span id="headerCarNumber">12가1111</span>
@@ -845,8 +1569,8 @@
     <div class="sheet-backdrop vehicle-backdrop" id="vehicleModal" aria-hidden="true">
       <div class="vehicle-modal" role="dialog" aria-modal="true" aria-labelledby="vehicleModalTitle">
         <button class="vehicle-close" id="vehicleClose" type="button" aria-label="닫기">×</button>
-        <h2 id="vehicleModalTitle">사고 차량 정보 조회를<br>완료했습니다.</h2>
-        <p>실제 사고 차량 정보와 일치하는지 확인하고<br>필요한 정보를 수정해 주세요.</p>
+        <h2 id="vehicleModalTitle">사고 차량 정보</h2>
+        <p>실제 사고 차량 정보와 일치하는지 확인하고<br>추가 정보를 입력해 주세요.</p>
 
         <div class="vehicle-field">
           <div>
@@ -879,7 +1603,57 @@
           </select>
         </div>
         <div class="vehicle-modal-actions">
-          <button class="primary-btn" id="vehicleSave" type="button">입력 완료</button>
+          <button class="primary-btn" id="vehicleSave" type="button">수정 완료</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-backdrop vehicle-backdrop" id="costInfoModal" aria-hidden="true">
+      <div class="vehicle-modal cost-info-modal" role="dialog" aria-modal="true" aria-labelledby="costInfoTitle">
+        <button class="vehicle-close" id="costInfoClose" type="button" aria-label="닫기">×</button>
+        <h2 id="costInfoTitle">교통비 안내</h2>
+        <p>교통비를 지급 받으시려면 보상 담당자에게 유선으로 문의해 주세요!</p>
+        <div class="vehicle-modal-actions">
+          <button class="primary-btn" id="costInfoConfirm" type="button">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-backdrop vehicle-backdrop" id="summaryEditModal" aria-hidden="true">
+      <div class="vehicle-modal" role="dialog" aria-modal="true" aria-labelledby="summaryEditTitle">
+        <button class="vehicle-close" id="summaryEditClose" type="button" aria-label="닫기">×</button>
+        <h2 id="summaryEditTitle">신청 정보를<br>수정해 주세요.</h2>
+        <p>필요한 항목만 바꾼 뒤 저장하면<br>확인 화면에 바로 반영돼요.</p>
+
+        <div class="vehicle-field single">
+          <label for="editCarNumber">차량번호</label>
+          <input class="vehicle-input" id="editCarNumber" value="12가1111">
+        </div>
+        <div class="vehicle-field single">
+          <label for="editCarName">차량명</label>
+          <input class="vehicle-input" id="editCarName" value="셀토스">
+        </div>
+        <div class="vehicle-field single">
+          <label for="editSupport">신청</label>
+          <select class="vehicle-select" id="editSupport">
+            <option value="rental">렌터카</option>
+            <option value="traffic">교통비</option>
+          </select>
+        </div>
+        <div class="vehicle-field single">
+          <label for="editArea">지역</label>
+          <input class="vehicle-input" id="editArea" value="서울특별시 강남구">
+        </div>
+        <div class="vehicle-field single">
+          <label for="editRepairShop">수리점</label>
+          <input class="vehicle-input" id="editRepairShop" value="광진 오토케어">
+        </div>
+        <div class="vehicle-field single">
+          <label for="editPhone">연락처</label>
+          <input class="vehicle-input" id="editPhone" value="010-1234-5678" inputmode="tel">
+        </div>
+        <div class="vehicle-modal-actions">
+          <button class="primary-btn" id="summaryEditSave" type="button">저장하기</button>
         </div>
       </div>
     </div>
@@ -930,6 +1704,96 @@
         </div>
       </div>
     </div>
+
+    <div class="sheet-backdrop" id="factorySheet" aria-hidden="true">
+      <div class="bottom-sheet factory-sheet" role="dialog" aria-modal="true" aria-labelledby="factoryTitle">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+          <h2 id="factoryTitle">희망 입고 공장을<br>선택해 주세요</h2>
+          <button class="sheet-close" type="button" id="factoryClose" aria-label="닫기">×</button>
+        </div>
+
+        <div class="factory-search">
+          <div class="factory-location-line"><span id="factoryLocationLabel">고객 위치:</span> <strong id="factoryLocationText">서울특별시 강남구</strong></div>
+          <div class="radius-list" aria-label="검색 반경">
+            <button class="radius-chip is-active" type="button">5km</button>
+            <button class="radius-chip" type="button">10km</button>
+            <button class="radius-chip" type="button">20km</button>
+            <button class="radius-chip" type="button">30km</button>
+          </div>
+          <div class="factory-notice" id="factoryNotice">검색반경 <strong>5km 이내</strong> DB·KB DRP 협력 공장 목록이에요.</div>
+        </div>
+
+        <div class="factory-list">
+          <button class="factory-card" type="button" data-shop="광진 오토케어">
+            <span class="factory-head">
+              <span class="factory-title-block">
+                <span class="factory-name">광진 오토케어</span>
+                <span class="factory-grade">DB·KB DRP 협력공장 A</span>
+              </span>
+              <span class="factory-reserve">협력 공업사</span>
+            </span>
+            <span class="factory-body">
+              <span>서울특별시 광진구 동일로 123 · 약 1.2km</span>
+              <span>02-213-8875</span>
+            </span>
+            <span class="factory-benefits">
+              <span class="benefit-chip">무료세차</span>
+              <span class="benefit-chip">무료입출고대행</span>
+              <span class="benefit-chip">오늘 입고 가능</span>
+            </span>
+            <span class="recommend-reasons">
+              <span class="reason-chip">가장 가까움</span>
+              <span class="reason-chip">보험 접수 경험 많음</span>
+            </span>
+          </button>
+          <button class="factory-card" type="button" data-shop="건대 카닥터">
+            <span class="factory-head">
+              <span class="factory-title-block">
+                <span class="factory-name">건대 카닥터</span>
+                <span class="factory-grade">KB DRP 협력공장 A</span>
+              </span>
+              <span class="factory-reserve">협력 공업사</span>
+            </span>
+            <span class="factory-body">
+              <span>서울특별시 광진구 능동로 55 · 약 2.1km</span>
+              <span>02-373-9600</span>
+            </span>
+            <span class="factory-benefits">
+              <span class="benefit-chip">무료세차</span>
+              <span class="benefit-chip">차체 수리 특화</span>
+              <span class="benefit-chip">내일 오전 가능</span>
+            </span>
+            <span class="recommend-reasons">
+              <span class="reason-chip">대차 연결 빠름</span>
+              <span class="reason-chip">평균 응답 빠름</span>
+            </span>
+          </button>
+          <button class="factory-card" type="button" data-shop="북오산공업사">
+            <span class="factory-head">
+              <span class="factory-title-block">
+                <span class="factory-name">북오산공업사</span>
+                <span class="factory-grade">DB DRP 협력공장 B</span>
+              </span>
+              <span class="factory-reserve">협력 공업사</span>
+            </span>
+            <span class="factory-body">
+              <span>경기 오산시 외삼미로 54-57 · 약 3.7km</span>
+              <span>031-378-1874</span>
+            </span>
+            <span class="factory-benefits">
+              <span class="benefit-chip">무료입출고대행</span>
+              <span class="benefit-chip">대형 공장</span>
+              <span class="benefit-chip">보험사 인증</span>
+            </span>
+            <span class="recommend-reasons">
+              <span class="reason-chip">공장 규모 우수</span>
+              <span class="reason-chip">수리 가능 범위 넓음</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -944,45 +1808,90 @@
     const modalCarNumber = document.querySelector("#modalCarNumber");
     const modalCarName = document.querySelector("#modalCarName");
     const modalCarType = document.querySelector("#modalCarType");
+    const modalCc = document.querySelector("#modalCc");
+    const modalYear = document.querySelector("#modalYear");
+    const summaryEditModal = document.querySelector("#summaryEditModal");
+    const summaryEditClose = document.querySelector("#summaryEditClose");
+    const summaryEditSave = document.querySelector("#summaryEditSave");
+    const editCarNumber = document.querySelector("#editCarNumber");
+    const editCarName = document.querySelector("#editCarName");
+    const editSupport = document.querySelector("#editSupport");
+    const editArea = document.querySelector("#editArea");
+    const editRepairShop = document.querySelector("#editRepairShop");
+    const editPhone = document.querySelector("#editPhone");
+    const costInfoModal = document.querySelector("#costInfoModal");
+    const costInfoClose = document.querySelector("#costInfoClose");
+    const costInfoConfirm = document.querySelector("#costInfoConfirm");
     const regionSheet = document.querySelector("#regionSheet");
+    const regionTitle = document.querySelector("#regionTitle");
     const regionClose = document.querySelector("#regionClose");
     const regionConfirm = document.querySelector("#regionConfirm");
+    const factorySheet = document.querySelector("#factorySheet");
+    const factoryDialog = document.querySelector(".factory-sheet");
+    const factoryClose = document.querySelector("#factoryClose");
+    const factoryLocationLabel = document.querySelector("#factoryLocationLabel");
+    const factoryLocationText = document.querySelector("#factoryLocationText");
+    const factoryNotice = document.querySelector("#factoryNotice");
 
     const state = {
       step: 1,
       carNumber: "",
       carName: "셀토스",
       carType: "SUV",
+      carCc: "1600~1999cc",
+      carYear: "5년 초과",
       support: "rental",
       area: "",
+      factorySearchArea: "",
       repairMode: "recommend",
       repairShop: "광진 오토케어",
       phone: "",
-      request: ""
+      request: "",
+      repairDays: "",
+      faultRate: 0,
+      faultSelected: false
     };
 
     const progressMap = {
       1: "12%",
-      2: "28%",
-      3: "44%",
-      4: "56%",
-      5: "68%",
+      2: "24%",
+      3: "38%",
+      4: "50%",
+      5: "60%",
       6: "68%",
-      7: "80%",
-      8: "92%",
-      9: "100%"
+      7: "68%",
+      8: "78%",
+      9: "92%",
+      10: "100%"
     };
 
     let activeUserReplyAnchor = null;
+    let regionSheetMode = "receive";
+    let pendingArea = "";
+    const TYPE_SPEED_MS = 22;
+    const BOT_THINKING_DELAY_MS = 520;
+    const SELECTION_ADVANCE_DELAY_MS = 340;
+
+    function advanceAfterSelection(callback) {
+      setTimeout(callback, SELECTION_ADVANCE_DELAY_MS);
+    }
 
     function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, (char) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      })[char]);
+      return String(value).replace(/[&<>"']/g, function(char) {
+        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char];
+      });
+    }
+
+    function formatWon(value) {
+      return Number(value || 0).toLocaleString("ko-KR") + "원";
+    }
+
+    function getFaultLabel(value) {
+      return Number(value) === 0 ? "무과실" : Number(value) + "%";
+    }
+
+    function estimatedDailyCost() {
+      return Math.round(32000 * (100 - Number(state.faultRate || 0)) / 100);
     }
 
     function userReplyOffset() {
@@ -990,17 +1899,18 @@
       return headerHeight + 80;
     }
 
-    function focusNode(node, offset = 104) {
+    function focusNode(node, offset) {
       if (!node) return;
-      requestAnimationFrame(() => {
-        const top = node.getBoundingClientRect().top + window.pageYOffset - offset;
+      requestAnimationFrame(function() {
+        const top = node.getBoundingClientRect().top + window.pageYOffset - (offset || 104);
         window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
       });
     }
 
-    function focusUserReply(node = activeUserReplyAnchor) {
-      if (!node) return;
-      focusNode(node.closest(".message") || node, userReplyOffset());
+    function focusUserReply(node) {
+      const target = node || activeUserReplyAnchor;
+      if (!target) return;
+      focusNode(target.closest(".message") || target, userReplyOffset());
     }
 
     function scrollBottom() {
@@ -1008,37 +1918,43 @@
         focusUserReply();
         return;
       }
-      requestAnimationFrame(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }));
+      requestAnimationFrame(function() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      });
     }
 
     function message(role, html) {
       const item = document.createElement("div");
-      item.className = `message ${role}`;
-      item.innerHTML = `<div class="bubble">${html}</div>`;
+      item.className = "message " + role;
+      item.innerHTML = '<div class="bubble">' + html + '</div>';
       chatLog.appendChild(item);
       return item.querySelector(".bubble");
     }
 
-    function botText(text, animate = false, onComplete) {
+    function widenBubble(bubble) {
+      if (bubble) bubble.closest(".message")?.classList.add("message-wide");
+    }
+
+    function botText(text, animate, onComplete) {
       if (!animate) {
-        const bubble = message("bot", escapeHTML(text).replace(/\n/g, "<br>"));
-        onComplete?.();
+        const bubble = message("bot", escapeHTML(text).replace(new RegExp("\\n", "g"), "<br>"));
+        if (onComplete) onComplete(bubble);
         return bubble;
       }
       const bubble = message("bot", '<span class="typing"><i></i><i></i><i></i></span>');
-      setTimeout(() => {
+      setTimeout(function() {
         bubble.textContent = "";
         let i = 0;
-        const timer = setInterval(() => {
+        const timer = setInterval(function() {
           bubble.textContent += text[i];
           i += 1;
           if (i >= text.length) {
             clearInterval(timer);
-            onComplete?.();
+            if (onComplete) onComplete(bubble);
           }
           scrollBottom();
-        }, 18);
-      }, 420);
+        }, TYPE_SPEED_MS);
+      }, BOT_THINKING_DELAY_MS);
       return bubble;
     }
 
@@ -1047,18 +1963,18 @@
       return activeUserReplyAnchor;
     }
 
-    function panel(html, className = "") {
+    function panel(html, className) {
       const box = document.createElement("div");
-      box.className = `chat-panel ${className}`.trim();
+      box.className = ("chat-panel " + (className || "")).trim();
       box.innerHTML = html;
       chatLog.appendChild(box);
       scrollBottom();
       return box;
     }
 
-    function block(html, className = "") {
+    function block(html, className) {
       const node = document.createElement("div");
-      node.className = className;
+      node.className = className || "";
       node.innerHTML = html;
       chatLog.appendChild(node);
       scrollBottom();
@@ -1068,41 +1984,42 @@
     function syncHeader() {
       headerCarNumber.textContent = state.carNumber || "12가1111";
       headerVehicle.classList.toggle("is-hidden", !state.carNumber);
-      modalCarNumber.value = state.carNumber || "12가1111";
-      modalCarName.value = state.carName;
-      modalCarType.value = `RV(${state.carType})`;
+      if (modalCarNumber) modalCarNumber.value = state.carNumber || "12가1111";
+      if (modalCarName) modalCarName.value = state.carName;
+      if (modalCarType) modalCarType.value = "RV(" + state.carType + ")";
+      if (modalCc) modalCc.value = state.carCc;
+      if (modalYear) modalYear.value = state.carYear;
     }
 
     function resultCard() {
-      return block(`
-        <div class="result-row">
-          <span class="result-label">조회 차량</span>
-          <span class="result-value">${escapeHTML(state.carName)} · ${escapeHTML(state.carType)}</span>
-        </div>
-        <div class="result-row">
-          <span class="result-label">예상 교통비</span>
-          <span class="result-amount">32,000원</span>
-        </div>
-        <div class="result-row">
-          <span class="result-label">렌터카</span>
-          <span class="result-value">신청 가능</span>
-        </div>
-      `, "result-card");
+      const carNumber = state.carNumber || "12가1111";
+      const html = [
+        '<div class="result-title-row"><p class="result-title">차량 정보 조회가 완료되었어요!</p><button class="result-edit-btn" id="resultVehicleEdit" type="button">차량 정보 수정하기</button></div>',
+        '<div class="result-row"><span class="result-label">차량 번호</span><span class="result-value">' + escapeHTML(carNumber) + '</span></div>',
+        '<div class="result-row"><span class="result-label">차종</span><span class="result-value">' + escapeHTML(state.carName) + '</span></div>',
+        '<div class="result-row"><span class="result-label">차량 규모</span><span class="result-value">' + escapeHTML(state.carType) + '</span></div>',
+        '<div class="result-row"><span class="result-label">배기량</span><span class="result-value">' + escapeHTML(state.carCc) + '</span></div>',
+        '<div class="result-row"><span class="result-label">연식</span><span class="result-value">' + escapeHTML(state.carYear) + '</span></div>'
+      ].join('');
+      const card = block(html, "result-card result-card-detail");
+      const edit = card.querySelector("#resultVehicleEdit");
+      if (edit) edit.addEventListener("click", openVehicleModal);
+      return card;
     }
 
-    function commonIntro(animated = false, onComplete) {
+    function commonIntro(animated, onComplete) {
       if (!animated) {
-        botText("고객님, 갑작스러운 사고로 많이 놀라셨죠?");
-        botText("차량번호만 입력하면 렌터카와 교통비 지원 가능 여부를 바로 확인해드릴게요.");
-        onComplete?.();
+        botText("고객님, 갑작스러운 사고로 많이 놀라셨죠?", false);
+        const secondBubble = botText("차량번호만 입력하면 렌터카와 교통비 지원 가능 여부를 바로 확인해드릴게요.", false);
+        if (onComplete) onComplete(secondBubble);
         return;
       }
-      botText("고객님, 갑작스러운 사고로 많이 놀라셨죠?", true, () => {
+      botText("고객님, 갑작스러운 사고로 많이 놀라셨죠?", true, function() {
         botText("차량번호만 입력하면 렌터카와 교통비 지원 가능 여부를 바로 확인해드릴게요.", true, onComplete);
       });
     }
 
-    function render(step, animated = false) {
+    function render(step, animated) {
       state.step = Number(step);
       chatLog.innerHTML = "";
       activeUserReplyAnchor = null;
@@ -1111,92 +2028,94 @@
       chatLog.classList.toggle("is-focus-mode", state.step === 2);
 
       if (state.step === 1) {
-        commonIntro(animated, renderCarLookup);
-      }
-      if (state.step === 2) {
-        commonIntro(false);
-        const replyNode = userText(state.carNumber);
-        resultCard();
-        focusUserReply(replyNode);
-        setTimeout(() => renderSupportChoice(true), 520);
+        commonIntro(!!animated, renderCarLookup);
         return;
       }
-      if (state.step >= 3) {
-        commonIntro(false);
-        userText(state.carNumber);
-        resultCard();
+
+      commonIntro(false);
+      userText(state.carNumber || "12가1111");
+      resultCard();
+
+      if (state.step === 2) {
+        focusUserReply();
+        setTimeout(function() { renderSupportChoice(true); }, BOT_THINKING_DELAY_MS);
+        return;
       }
+
       if (state.step >= 3) {
-        userText(state.support === "rental" ? "렌터카 받을래요" : "교통비 받을래요");
+        userText(state.support === "rental" ? "렌터카 신청하기" : "예상 교통비 알아보기");
       }
+
+      if (state.support === "traffic") {
+        if (state.step === 3) renderTrafficCostInput();
+        if (state.step >= 4) userText((state.repairDays || "2") + "일 · " + getFaultLabel(state.faultRate));
+        if (state.step === 4) renderCostResult();
+        return;
+      }
+
       if (state.step === 3) renderAreaChoice();
-      if (state.step >= 4) {
-        userText(state.area || "서울특별시 강남구");
-      }
-      if (state.step === 4 && state.support === "rental") renderRepairMode();
-      if (state.step === 4 && state.support === "traffic") renderContact();
-      if (state.step >= 5 && state.support === "rental") {
-        userText(state.repairMode === "recommend" ? "가까운 수리점 추천받을게요" : "수리점은 이미 정했어요");
-      }
-      if (state.step === 5) renderShopRecommend();
-      if (state.step === 6) renderShopDirect();
-      if (state.step >= 7 && state.support === "rental") {
-        userText(state.repairShop);
-      }
-      if (state.step === 7) renderContact();
-      if (state.step >= 8) {
-        userText(state.phone || "010-1234-5678");
-      }
-      if (state.step === 8) renderFinal();
-      if (state.step === 9) renderDone();
-      scrollBottom();
+      if (state.step >= 4) userText(state.area || "서울특별시 강남구");
+      if (state.step === 4) renderPhoneAuth();
+      if (state.step >= 5) userText(state.phone || "010-1234-5678");
+      if (state.step === 5) renderRepairMode();
+      if (state.step >= 6) userText(state.repairMode === "recommend" ? "가까운 수리점 추천받을게요" : "수리점은 이미 정했어요");
+      if (state.step === 6) renderShopRecommend();
+      if (state.step === 7) renderShopDirect();
+      if (state.step >= 8) userText(state.repairShop || "광진 오토케어");
+      if (state.step === 8) renderRequestDetails();
+      if (state.step >= 9 && state.request) userText(state.request);
+      if (state.step === 9) renderFinal();
+      if (state.step === 10) renderDone();
     }
 
-    function renderCarLookup() {
-      const box = panel(`
-        <div class="field">
-          <label class="field-label" for="carNumber">차량번호</label>
-          <input class="input" id="carNumber" placeholder="예) 123가0000" inputmode="text" autocomplete="off">
-        </div>
-        <button class="primary-btn" id="lookupBtn" type="button" disabled>차량 조회하기</button>
-      `, "bottom-input-panel");
-      const input = box.querySelector("#carNumber");
-      const btn = box.querySelector("#lookupBtn");
+    function renderCarLookup(bubble) {
+      const form = document.createElement("div");
+      form.className = "bubble-form";
+      form.innerHTML = [
+        '<div class="field">',
+        '<label class="field-label" for="carNumber">차량번호</label>',
+        '<input class="input" id="carNumber" placeholder="예) 123가0000" inputmode="text" autocomplete="off">',
+        '</div>',
+        '<button class="primary-btn" id="lookupBtn" type="button" disabled>차량 조회하기</button>'
+      ].join('');
+      if (bubble) {
+        widenBubble(bubble);
+        bubble.appendChild(form);
+        scrollBottom();
+      } else {
+        panel("", "bottom-input-panel").appendChild(form);
+      }
+      const input = form.querySelector("#carNumber");
+      const btn = form.querySelector("#lookupBtn");
       input.value = state.carNumber;
-      input.addEventListener("input", () => { btn.disabled = input.value.trim().length === 0; });
+      input.addEventListener("input", function() { btn.disabled = input.value.trim().length === 0; });
       btn.disabled = input.value.trim().length === 0;
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", function() {
         state.carNumber = input.value.trim();
         render(2);
       });
     }
 
-    function renderSupportChoice(animate = false) {
-      botText("수리 기간 동안 어떤 지원이 필요하세요?", animate, () => {
-        const box = panel(`
-        <div class="choice-list">
-          <button class="choice-btn" type="button" data-support="rental">
-            <span>
-              <span class="choice-title">렌터카 받을래요</span>
-              <span class="choice-copy">가까운 업체와 빠르게 매칭</span>
-            </span>
-            <span class="choice-check"></span>
-          </button>
-          <button class="choice-btn" type="button" data-support="traffic">
-            <span>
-              <span class="choice-title">교통비 받을래요</span>
-              <span class="choice-copy">차량 없이 비용으로 지원</span>
-            </span>
-            <span class="choice-check"></span>
-          </button>
-        </div>
-      `, "bottom-choice-panel");
-        box.querySelectorAll("[data-support]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            box.querySelectorAll("[data-support]").forEach((item) => item.classList.remove("is-selected"));
+    function renderSupportChoice(animate) {
+      botText("수리 기간 동안 어떤 지원이 필요하세요?", !!animate, function() {
+        const box = panel([
+          '<div class="bubble-choice-list">',
+          '<button class="bubble-choice-btn" type="button" data-support="rental">',
+          '<span class="support-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 15h14l-1.4-4.2A2 2 0 0 0 15.7 9H8.3a2 2 0 0 0-1.9 1.8L5 15Z"></path><path d="M4 15h16v3H4z"></path><path d="M7 18v1"></path><path d="M17 18v1"></path></svg></span>',
+          '<span class="support-choice-text"><span class="bubble-choice-title">렌터카 신청하기</span><span class="bubble-choice-copy">수리 기간 동안 차량이 필요할 때</span></span>',
+          '</button>',
+          '<button class="bubble-choice-btn" type="button" data-support="traffic">',
+          '<span class="support-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 5h9l3 3v11H6z"></path><path d="M14 5v4h4"></path><path d="M9 13h6"></path><path d="M9 16h4"></path></svg></span>',
+          '<span class="support-choice-text"><span class="bubble-choice-title">예상 교통비 알아보기</span><span class="bubble-choice-copy">차량 없이 비용으로 지원받기</span></span>',
+          '</button>',
+          '</div>'
+        ].join(''), "support-bottom-sheet");
+        box.querySelectorAll("[data-support]").forEach(function(btn) {
+          btn.addEventListener("click", function() {
+            box.querySelectorAll("[data-support]").forEach(function(item) { item.classList.remove("is-selected"); });
             btn.classList.add("is-selected");
             state.support = btn.dataset.support;
-            setTimeout(() => render(3), 260);
+            advanceAfterSelection(function() { render(3); });
           });
         });
         focusUserReply();
@@ -1204,45 +2123,192 @@
     }
 
     function renderAreaChoice() {
-      botText(state.support === "rental"
-        ? "렌터카를 받을 지역을 알려주세요. 배송 가능한 가까운 업체를 우선으로 찾아드릴게요."
-        : "교통비 지원 산정을 위해 사고 지역을 알려주세요.", true, () => {
-        const box = panel(`
-        <button class="select-field ${state.area ? "has-value" : ""}" id="areaSelect" type="button">
-          ${state.area || "지역 선택"}
-        </button>
-      `, "bottom-choice-panel");
-        box.querySelector("#areaSelect").addEventListener("click", openRegionSheet);
+      botText("렌터카를 받을 지역을 알려주세요. 배송 가능한 가까운 업체를 우선으로 찾아드릴게요.", true, function(bubble) {
+        widenBubble(bubble);
+        const actions = document.createElement("div");
+        actions.className = "bubble-action-grid";
+        actions.innerHTML = '<button class="bubble-action-btn" id="areaSelect" type="button">' + escapeHTML(state.area || "지역 선택") + '</button>';
+        bubble.appendChild(actions);
+        actions.querySelector("#areaSelect").addEventListener("click", function() { openRegionSheet("receive"); });
+        focusUserReply();
+      });
+    }
+
+    function renderTrafficCostInput() {
+      botText("교통비 조회를 위해 차량의 예상 수리기간과 예상 과실을 알려주세요.", true, function(bubble) {
+        widenBubble(bubble);
+        const options = Array.from({ length: 25 }, function(_, index) {
+          const day = index + 1;
+          return '<option value="' + day + '">' + day + '일</option>';
+        }).join('');
+        const form = document.createElement("div");
+        form.className = "traffic-form";
+        form.innerHTML = [
+          '<div class="field">',
+          '<label class="field-label" for="repairPeriodSelect">예상 수리 기간 선택</label>',
+          '<select class="native-select" id="repairPeriodSelect" required>',
+          '<option value="" disabled selected>예상 수리기간 선택</option>',
+          options,
+          '</select>',
+          '<p class="field-hint">수리 가능 시 최대 25일, 불가능 시 최대 10일 선택 가능합니다. (실제 작업 시간 160시간 초과시에만 30일 한도 적용)</p>',
+          '</div>',
+          '<div class="field">',
+          '<span class="field-label">예상 과실 선택</span>',
+          '<div class="fault-card">',
+          '<p class="fault-value is-placeholder" id="faultValue">예상 과실 선택</p>',
+          '<input class="fault-range" id="faultRange" type="range" min="0" max="100" step="10" value="0">',
+          '<div class="fault-range-labels"><span>무과실</span><span>50%</span><span>100%</span></div>',
+          '</div>',
+          '</div>',
+          '<button class="primary-btn" id="trafficCalcBtn" type="button" disabled>예상 교통비 조회</button>'
+        ].join('');
+        bubble.appendChild(form);
+        const period = form.querySelector("#repairPeriodSelect");
+        const range = form.querySelector("#faultRange");
+        const value = form.querySelector("#faultValue");
+        const calc = form.querySelector("#trafficCalcBtn");
+        if (state.repairDays) period.value = state.repairDays;
+        if (state.faultSelected) {
+          range.value = state.faultRate;
+          value.textContent = getFaultLabel(state.faultRate);
+          value.classList.remove("is-placeholder");
+        }
+        function update() {
+          calc.disabled = !(period.value && state.faultSelected);
+        }
+        period.addEventListener("change", update);
+        range.addEventListener("input", function() {
+          state.faultSelected = true;
+          state.faultRate = Number(range.value);
+          value.textContent = getFaultLabel(state.faultRate);
+          value.classList.remove("is-placeholder");
+          update();
+        });
+        calc.addEventListener("click", function() {
+          state.repairDays = period.value;
+          state.faultRate = Number(range.value);
+          state.faultSelected = true;
+          render(4);
+        });
+        update();
+        focusUserReply();
+      });
+    }
+
+    function renderCostResult() {
+      botText("예상 교통비를 확인해보세요", true, function() {
+        const amount = estimatedDailyCost();
+        const card = block([
+          '<div class="cost-estimate-card">',
+          '<h2 class="cost-result-title">선택하신 수리 기간과 예상 과실을 기준으로 계산했어요.</h2>',
+          '<div class="cost-estimate-row"><span>예상 과실</span><strong>' + getFaultLabel(state.faultRate) + '</strong></div>',
+          '<div class="cost-estimate-row"><span>예상 수리 기간</span><strong>' + escapeHTML(state.repairDays || "2") + '일</strong></div>',
+          '<div class="cost-main"><span><strong class="cost-title">나의 예상 교통비</strong><span class="cost-sub">1일당 금액</span></span><strong class="cost-amount">' + formatWon(amount) + '</strong></div>',
+          '<ul class="cost-notes">',
+          '<li>실제 수리 기간 및 과실비율에 따라 금액이 상이할 수 있습니다.</li>',
+          '<li>본 계산은 100% 확정된 금액이 아니므로 참고용으로 사용해주세요.</li>',
+          '<li>교통비는 자동차 소유자인 경우 지급받을 수 있습니다.</li>',
+          '</ul>',
+          '</div>',
+          '<div class="rental-history">',
+          '<h2>같은 차량을 이용하는 고객님들은<br>아래 차량들로 렌트카를 이용했어요!</h2>',
+          '<div class="rental-history-list">',
+          rentalHistoryItem(1, "K7", "K7 2세대 F/L"),
+          rentalHistoryItem(2, "넥쏘", "넥쏘 1세대"),
+          rentalHistoryItem(3, "레이", "레이 1세대 F/L2"),
+          rentalHistoryItem(4, "싼타페", "싼타페 5세대"),
+          rentalHistoryItem(5, "G70", "G70 1세대 F/L"),
+          '<p class="rental-history-note">고객님의 차량 조건(연식)에 따라 실제 배차되는 차량이 본 리스트와 차이가 있을 수 있습니다.</p>',
+          '</div>',
+          '</div>',
+          '<div class="cost-actions">',
+          '<button class="primary-btn" id="useRentalBtn" type="button">렌터카 이용할게요</button>',
+          '<button class="cost-only-btn" id="costOnlyBtn" type="button">예상 교통비 확인만 할게요</button>',
+          '</div>'
+        ].join(''), "cost-result-block");
+        card.querySelector("#useRentalBtn").addEventListener("click", function() {
+          state.support = "rental";
+          render(3);
+        });
+        card.querySelector("#costOnlyBtn").addEventListener("click", openCostInfoModal);
+      });
+    }
+
+    function rentalHistoryItem(rank, name, desc) {
+      return '<div class="rental-history-item"><span class="rental-history-rank">' + rank + '</span><span><strong class="rental-history-name">' + escapeHTML(name) + '</strong><span class="rental-history-desc">' + escapeHTML(desc) + '</span></span></div>';
+    }
+
+    function renderPhoneAuth() {
+      botText("연락드릴 휴대폰 번호를 알려주세요.", true, function(bubble) {
+        widenBubble(bubble);
+        const form = document.createElement("div");
+        form.className = "bubble-form";
+        form.innerHTML = [
+          '<div class="field"><label class="field-label" for="phoneAuthInput">휴대폰 번호</label><div class="auth-row">',
+          '<input class="input" id="phoneAuthInput" placeholder="010-0000-0000" inputmode="tel" autocomplete="tel">',
+          '<button class="auth-side-btn" id="sendAuthBtn" type="button">인증번호 받기</button>',
+          '</div></div>',
+          '<div class="field" id="authCodeField" hidden><label class="field-label" for="authCodeInput">인증번호 <span class="auth-meta" id="authTimer">2:55</span></label><div class="auth-row">',
+          '<input class="input" id="authCodeInput" placeholder="000000" inputmode="numeric" maxlength="6" autocomplete="one-time-code">',
+          '<button class="auth-side-btn" id="verifyAuthBtn" type="button">확인</button>',
+          '</div><p class="auth-message" id="authMessage">인증번호를 발송했어요.</p></div>',
+          '<button class="primary-btn" id="phoneAuthNext" type="button" disabled>입력 완료</button>'
+        ].join('');
+        bubble.appendChild(form);
+        const phone = form.querySelector("#phoneAuthInput");
+        const send = form.querySelector("#sendAuthBtn");
+        const codeField = form.querySelector("#authCodeField");
+        const code = form.querySelector("#authCodeInput");
+        const verify = form.querySelector("#verifyAuthBtn");
+        const message = form.querySelector("#authMessage");
+        const next = form.querySelector("#phoneAuthNext");
+        phone.value = state.phone;
+        function resetAuth() {
+          code.classList.remove("is-verified");
+          message.classList.remove("is-success");
+          next.disabled = true;
+        }
+        phone.addEventListener("input", resetAuth);
+        send.addEventListener("click", function() {
+          if (!phone.value.trim()) { phone.focus(); return; }
+          codeField.hidden = false;
+          send.textContent = "재발송";
+          message.textContent = "인증번호를 발송했어요.";
+          resetAuth();
+          scrollBottom();
+        });
+        code.addEventListener("input", resetAuth);
+        verify.addEventListener("click", function() {
+          if (!code.value.trim()) { code.focus(); return; }
+          code.classList.add("is-verified");
+          message.textContent = "인증에 성공했어요!";
+          message.classList.add("is-success");
+          next.disabled = false;
+        });
+        next.addEventListener("click", function() {
+          state.phone = phone.value.trim();
+          render(5);
+        });
         focusUserReply();
       });
     }
 
     function renderRepairMode() {
-      botText("차량 수리점은 정해지셨나요?", true, () => {
-        const box = panel(`
-        <div class="choice-list">
-          <button class="choice-btn" type="button" data-repair="recommend">
-            <span>
-              <span class="choice-title">아직 못 정했어요</span>
-              <span class="choice-copy">근처 우수 수리점 추천</span>
-            </span>
-            <span class="choice-check"></span>
-          </button>
-          <button class="choice-btn" type="button" data-repair="direct">
-            <span>
-              <span class="choice-title">이미 정했어요</span>
-              <span class="choice-copy">수리점명만 전달</span>
-            </span>
-            <span class="choice-check"></span>
-          </button>
-        </div>
-      `, "bottom-choice-panel");
-        box.querySelectorAll("[data-repair]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            box.querySelectorAll("[data-repair]").forEach((item) => item.classList.remove("is-selected"));
+      botText("사고 차량 공업사를 정하셨나요?", true, function(bubble) {
+        widenBubble(bubble);
+        const actions = document.createElement("div");
+        actions.className = "bubble-choice-list";
+        actions.innerHTML = [
+          '<button class="bubble-choice-btn" type="button" data-repair="recommend"><span><span class="bubble-choice-title">아직 못 정했어요</span><span class="bubble-choice-copy">고객님 근처의 협력 공장을 추천해 드릴게요!</span></span></button>',
+          '<button class="bubble-choice-btn" type="button" data-repair="direct"><span><span class="bubble-choice-title">이미 정했어요</span><span class="bubble-choice-copy">이미 공업사를 선택하신 경우</span></span></button>'
+        ].join('');
+        bubble.appendChild(actions);
+        actions.querySelectorAll("[data-repair]").forEach(function(btn) {
+          btn.addEventListener("click", function() {
+            actions.querySelectorAll("[data-repair]").forEach(function(item) { item.classList.remove("is-selected"); });
             btn.classList.add("is-selected");
             state.repairMode = btn.dataset.repair;
-            setTimeout(() => render(state.repairMode === "recommend" ? 5 : 6), 260);
+            advanceAfterSelection(function() { render(state.repairMode === "recommend" ? 6 : 7); });
           });
         });
         focusUserReply();
@@ -1250,31 +2316,19 @@
     }
 
     function renderShopRecommend() {
-      botText(`${state.area || "선택하신 지역"} 근처 우수 수리점 2곳을 찾았어요.`, true, () => {
-        const box = panel(`
-        <div class="choice-list">
-          <button class="shop-card" type="button" data-shop="광진 오토케어">
-            <span class="shop-head">
-              <span class="shop-name">광진 오토케어</span>
-              <span class="badge">보험사 인증</span>
-            </span>
-            <span class="shop-meta"><span>1.2km</span><span>국산차 전문</span><span>오늘 접수 가능</span></span>
-          </button>
-          <button class="shop-card" type="button" data-shop="건대 카닥터">
-            <span class="shop-head">
-              <span class="shop-name">건대 카닥터</span>
-              <span class="badge">보험사 인증</span>
-            </span>
-            <span class="shop-meta"><span>2.1km</span><span>차체 수리</span><span>내일 오전 가능</span></span>
-          </button>
-        </div>
-      `, "bottom-choice-panel");
-        box.querySelectorAll("[data-shop]").forEach((card) => {
-          card.addEventListener("click", () => {
-            box.querySelectorAll("[data-shop]").forEach((item) => item.classList.remove("is-selected"));
-            card.classList.add("is-selected");
-            state.repairShop = card.dataset.shop;
-            setTimeout(() => render(7), 260);
+      botText((state.area || "선택하신 지역") + " 기준으로 입고 가능한 협력 공장을 찾았어요. 희망 공장을 선택하면 렌트 요청과 함께 전달할게요.", true, function(bubble) {
+        widenBubble(bubble);
+        const actions = document.createElement("div");
+        actions.className = "bubble-action-grid";
+        actions.innerHTML = '<button class="bubble-action-btn" type="button" data-factory-open="near">가까운 협력 공업사 찾기</button><button class="bubble-action-btn" type="button" data-factory-open="region">지역으로 공업사 찾기</button>';
+        bubble.appendChild(actions);
+        actions.querySelectorAll("[data-factory-open]").forEach(function(button) {
+          button.addEventListener("click", function() {
+            if (button.dataset.factoryOpen === "region") {
+              openRegionSheet("factory");
+              return;
+            }
+            openFactorySheet("near");
           });
         });
         focusUserReply();
@@ -1282,162 +2336,143 @@
     }
 
     function renderShopDirect() {
-      botText("정해진 수리점명을 입력해 주세요. 업체에게 바로 전달할게요.", true, () => {
-        const box = panel(`
-        <div class="field">
-          <label class="field-label" for="repairShopInput">수리점명</label>
-          <input class="input" id="repairShopInput" placeholder="예) 광진 오토케어" autocomplete="off">
-        </div>
-        <button class="primary-btn" id="directNext" type="button" disabled>입력 완료</button>
-      `, "bottom-choice-panel");
-        const input = box.querySelector("#repairShopInput");
-        const next = box.querySelector("#directNext");
+      botText("정해진 수리점명을 입력해 주세요. 업체에게 바로 전달할게요.", true, function(bubble) {
+        widenBubble(bubble);
+        const form = document.createElement("div");
+        form.className = "bubble-form";
+        form.innerHTML = '<div class="field"><label class="field-label" for="repairShopInput">수리점명</label><input class="input" id="repairShopInput" placeholder="예) 광진 오토케어" autocomplete="off"></div><button class="primary-btn" id="directNext" type="button" disabled>입력 완료</button>';
+        bubble.appendChild(form);
+        const input = form.querySelector("#repairShopInput");
+        const next = form.querySelector("#directNext");
         input.value = state.repairShop === "광진 오토케어" ? "" : state.repairShop;
-        input.addEventListener("input", () => { next.disabled = input.value.trim().length === 0; });
+        input.addEventListener("input", function() { next.disabled = input.value.trim().length === 0; });
         next.disabled = input.value.trim().length === 0;
-        next.addEventListener("click", () => {
+        next.addEventListener("click", function() {
           state.repairShop = input.value.trim();
-          render(7);
-        });
-        focusUserReply();
-      });
-    }
-
-    function renderContact() {
-      botText("연락처를 인증하고 요청사항이 있으면 남겨주세요.", true, () => {
-        const box = panel(`
-        <div class="field">
-          <label class="field-label" for="phoneInput">연락처</label>
-          <input class="input" id="phoneInput" placeholder="010-1234-5678" inputmode="tel" autocomplete="tel">
-        </div>
-        <div class="field">
-          <label class="field-label" for="requestInput">요청사항</label>
-          <textarea class="input" id="requestInput" placeholder="요청사항이 있으면 입력해 주세요."></textarea>
-          <div class="chips">
-            <button class="chip" type="button" data-chip="빠른 배차 부탁드려요">빠른 배차</button>
-            <button class="chip" type="button" data-chip="금연 차량이면 좋겠어요">금연 차량</button>
-            <button class="chip" type="button" data-chip="문자로 먼저 연락 주세요">문자 연락</button>
-          </div>
-        </div>
-        <button class="primary-btn" id="contactNext" type="button" disabled>입력 완료</button>
-      `, "bottom-choice-panel");
-        const phone = box.querySelector("#phoneInput");
-        const req = box.querySelector("#requestInput");
-        const next = box.querySelector("#contactNext");
-        phone.value = state.phone;
-        req.value = state.request;
-        phone.addEventListener("input", () => { next.disabled = phone.value.trim().length === 0; });
-        box.querySelectorAll("[data-chip]").forEach((chip) => {
-          chip.addEventListener("click", () => {
-            chip.classList.toggle("is-active");
-            const text = chip.dataset.chip;
-            if (!req.value.includes(text)) req.value = req.value ? `${req.value}\n${text}` : text;
-          });
-        });
-        next.disabled = phone.value.trim().length === 0;
-        next.addEventListener("click", () => {
-          state.phone = phone.value.trim();
-          state.request = req.value.trim();
           render(8);
         });
         focusUserReply();
       });
     }
 
-    function renderFinal() {
-      botText("마지막으로 신청 내용을 확인해 주세요.", true, () => {
-        const summary = block(`
-        <div class="summary-row">
-          <span class="summary-label">차량</span>
-          <span class="summary-value">${escapeHTML(state.carNumber)} · ${escapeHTML(state.carName)}</span>
-        </div>
-        <div class="summary-row">
-          <span class="summary-label">신청</span>
-          <span class="summary-value">${state.support === "rental" ? "렌터카" : "교통비"}</span>
-        </div>
-        <div class="summary-row">
-          <span class="summary-label">지역</span>
-          <span class="summary-value">${escapeHTML(state.area || "서울특별시 강남구")}</span>
-        </div>
-        <div class="summary-row">
-          <span class="summary-label">수리점</span>
-          <span class="summary-value">${state.support === "rental" ? escapeHTML(state.repairShop) : "해당 없음"}</span>
-        </div>
-        <div class="summary-row">
-          <span class="summary-label">연락처</span>
-          <span class="summary-value">${escapeHTML(state.phone || "010-1234-5678")}</span>
-        </div>
-      `, "summary-card");
+    function renderRequestDetails() {
+      botText("요청사항이 있으면 남겨주세요.", true, function(bubble) {
+        widenBubble(bubble);
+        const form = document.createElement("div");
+        form.className = "bubble-form";
+        form.innerHTML = [
+          '<div class="field">',
+          '<label class="field-label" for="requestInput">요청사항</label>',
+          '<textarea class="input" id="requestInput" placeholder="요청사항이 있으면 입력해 주세요."></textarea>',
+          '<div class="chips"><button class="chip" type="button" data-chip="요청사항이 없습니다.">요청사항 없음</button></div>',
+          '</div>',
+          '<button class="primary-btn" id="requestNext" type="button">입력 완료</button>'
+        ].join('');
+        bubble.appendChild(form);
+        const req = form.querySelector("#requestInput");
+        req.value = state.request;
+        form.querySelector("[data-chip]").addEventListener("click", function(event) {
+          event.currentTarget.classList.add("is-active");
+          req.value = "요청사항이 없습니다.";
+        });
+        form.querySelector("#requestNext").addEventListener("click", function() {
+          state.request = req.value.trim();
+          render(9);
+        });
         focusUserReply();
+      });
+    }
 
-        setTimeout(() => {
-          const terms = block(`
-        <h2 class="terms-section-title">약관에 동의해 주세요</h2>
-        <label class="terms-total">
-          <input class="inline-check" id="termsAll" type="checkbox">
-          <span>전체 동의</span>
-        </label>
-        <div class="terms-list">
-          <label class="terms-line">
-            <input class="inline-check term-item" type="checkbox">
-            <span>[필수] 만 21세 이상입니다.</span>
-            <button class="terms-open" type="button">보기</button>
-          </label>
-          <label class="terms-line">
-            <input class="inline-check term-item" type="checkbox">
-            <span>[필수] 렌터카 이용약관 및 개인정보 처리방침 동의</span>
-            <button class="terms-open" type="button">보기</button>
-          </label>
-          <label class="terms-line">
-            <input class="inline-check term-item" type="checkbox">
-            <span>[필수] 이용 제한 안내 확인</span>
-            <button class="terms-open" type="button">보기</button>
-          </label>
-        </div>
-        <button class="primary-btn" id="submitBtn" type="button" disabled>${state.support === "rental" ? "렌터카 신청 완료" : "교통비 신청 완료"}</button>
-      `, "terms-section bottom-choice-panel");
-          const all = terms.querySelector("#termsAll");
-          const items = [...terms.querySelectorAll(".term-item")];
-          const submit = terms.querySelector("#submitBtn");
-          const update = () => {
-            const checked = items.every((item) => item.checked);
-            all.checked = checked;
-            submit.disabled = !checked;
-          };
-          all.addEventListener("change", () => {
-            items.forEach((item) => { item.checked = all.checked; });
-            update();
-          });
-          items.forEach((item) => item.addEventListener("change", update));
-          submit.addEventListener("click", () => render(9));
-          focusUserReply();
-        }, 260);
+    function renderFinal() {
+      botText("마지막으로 신청 내용을 확인해 주세요.", true, function() {
+        const summary = block([
+          '<div class="summary-row"><span class="summary-label">차량</span><span class="summary-value">' + escapeHTML(state.carNumber || "12가1111") + ' · ' + escapeHTML(state.carName) + '</span></div>',
+          '<div class="summary-row"><span class="summary-label">신청</span><span class="summary-value">렌터카</span></div>',
+          '<div class="summary-row"><span class="summary-label">지역</span><span class="summary-value">' + escapeHTML(state.area || "서울특별시 강남구") + '</span></div>',
+          '<div class="summary-row"><span class="summary-label">수리점</span><span class="summary-value">' + escapeHTML(state.repairShop || "광진 오토케어") + '</span></div>',
+          '<div class="summary-row"><span class="summary-label">입고 지원</span><span class="summary-value">렌트 요청과 함께 전달</span></div>',
+          '<div class="summary-row"><span class="summary-label">연락처</span><span class="summary-value">' + escapeHTML(state.phone || "010-1234-5678") + '</span></div>',
+          '<div class="summary-actions"><button class="primary-btn" id="summaryConfirm" type="button">내용을 확인했습니다</button><button class="secondary-btn" id="summaryEditOpen" type="button">정보 수정하기</button></div>'
+        ].join(''), "summary-card");
+        summary.querySelector("#summaryConfirm").addEventListener("click", function(event) {
+          event.currentTarget.disabled = true;
+          summary.querySelector("#summaryEditOpen").disabled = true;
+          renderTermsBubble();
+        });
+        summary.querySelector("#summaryEditOpen").addEventListener("click", openSummaryEditModal);
+        focusUserReply();
+      });
+    }
+
+    function renderTermsBubble() {
+      botText("약관에 동의해 주세요", true, function(bubble) {
+        widenBubble(bubble);
+        const terms = document.createElement("div");
+        terms.className = "terms-inline";
+        terms.innerHTML = [
+          '<label class="terms-total"><input class="inline-check" id="termsAll" type="checkbox"><span>전체 동의</span></label>',
+          '<div class="terms-list">',
+          '<label class="terms-line"><input class="inline-check term-item" type="checkbox"><span>[필수] 만 21세 이상입니다.</span><button class="terms-open" type="button">보기</button></label>',
+          '<label class="terms-line"><input class="inline-check term-item" type="checkbox"><span>[필수] 렌터카 이용약관 및 개인정보 처리방침 동의</span><button class="terms-open" type="button">보기</button></label>',
+          '<label class="terms-line"><input class="inline-check term-item" type="checkbox"><span>[필수] 이용 제한 안내 확인</span><button class="terms-open" type="button">보기</button></label>',
+          '</div>',
+          '<button class="primary-btn" id="submitBtn" type="button" disabled>렌터카 신청 완료</button>'
+        ].join('');
+        bubble.appendChild(terms);
+        const all = terms.querySelector("#termsAll");
+        const items = Array.from(terms.querySelectorAll(".term-item"));
+        const submit = terms.querySelector("#submitBtn");
+        function update() {
+          const checked = items.every(function(item) { return item.checked; });
+          all.checked = checked;
+          submit.disabled = !checked;
+        }
+        all.addEventListener("change", function() {
+          items.forEach(function(item) { item.checked = all.checked; });
+          update();
+        });
+        items.forEach(function(item) { item.addEventListener("change", update); });
+        submit.addEventListener("click", function() { render(10); });
+        focusUserReply();
       });
     }
 
     function renderDone() {
-      block(`
-        <div class="done-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M5 12l4 4 10-10" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </div>
-        <h1>${state.support === "rental" ? "렌터카 신청이" : "교통비 신청이"} 완료되었어요</h1>
-        <p>평균 3분 내 진행 상황을 알림으로 보내드릴게요.</p>
-        <div class="done-status">
-          <div class="done-status-row">
-            <span>진행 상태</span>
-            <strong>${state.support === "rental" ? "업체 매칭 중" : "교통비 산정 중"}</strong>
-          </div>
-          <div class="done-status-row">
-            <span>예상 안내</span>
-            <strong>3분 이내</strong>
-          </div>
-        </div>
-      `, "done");
+      block([
+        '<div class="done-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l4 4 10-10" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>',
+        '<h1>렌터카 신청이<br>완료되었어요</h1>',
+        '<p>렌터카 배정과 사고 차량 수리점 정보를 알림톡으로 안내드릴게요.</p>',
+        '<div class="process-info">',
+        processStep('<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.6 2.6a2 2 0 0 1-.45 2.11L8 9.7a16 16 0 0 0 6.3 6.3l1.27-1.27a2 2 0 0 1 2.11-.45c.83.28 1.7.48 2.6.6A2 2 0 0 1 22 16.92z"></path></svg>', '담당자가 신속하게', '고객님 연락처로 연락드려요'),
+        processStep('<svg viewBox="0 0 24 24"><path d="M3 17h13l4-5h-7l-2-4H7l-4 9z"></path><path d="M6 17a2 2 0 1 0 4 0"></path><path d="M16 17a2 2 0 1 0 4 0"></path></svg>', '고객님의 사고 차량을', '안전하게 픽업할게요'),
+        processStep('<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5l-2.4 2.4-3-3 2.4-2.4z"></path></svg>', '픽업한 고객님의 차량을', '선택하신 협력 공업사로 입고해요'),
+        '</div>',
+        '<div class="done-summary">',
+        '<div class="done-summary-group"><p class="done-summary-title">렌터카 정보</p>',
+        '<div class="done-status-row"><span>렌터카 받을 지역</span><strong>' + escapeHTML(state.area || "서울시 강남구") + '</strong></div>',
+        '<div class="done-status-row"><span>고객님 연락처</span><strong>' + escapeHTML(state.phone || "010-1234-5678") + '</strong></div></div>',
+        '<div class="done-summary-group"><p class="done-summary-title">공업사 정보</p>',
+        '<div class="done-status-row"><span>공업사 위치</span><strong>서울시 강남구 테헤란로 123</strong></div>',
+        '<div class="done-status-row"><span>공업사 연락처</span><strong>02-0000-1111</strong></div></div>',
+        '</div>',
+        '<div class="done-note">• 렌트 차량은 자차/종합보험(대인·대물·자손)에 가입되어 있어요.<br>• 취소·변경은 배정된 렌터카 업체로 문의해 주세요.</div>'
+      ].join(''), "done");
     }
 
-    function openRegionSheet() {
+    function processStep(icon, title, copy) {
+      return '<div class="process-step"><span class="process-icon">' + icon + '</span><span class="process-copy"><strong>' + title + '</strong><span>' + copy + '</span></span></div>';
+    }
+
+    function openRegionSheet(mode) {
+      regionSheetMode = mode || "receive";
+      const selectedRegion = regionSheetMode === "factory" ? state.factorySearchArea : state.area;
+      pendingArea = selectedRegion || "";
+      regionTitle.innerHTML = regionSheetMode === "factory" ? "어느 지역의 공장을<br>찾을까요?" : "어느 지역에서<br>받으실 건가요?";
+      regionConfirm.textContent = regionSheetMode === "factory" ? "이 지역 공장 보기" : "이 지역으로 선택";
+      document.querySelectorAll("[data-region]").forEach(function(item) {
+        item.classList.toggle("is-selected", !!pendingArea && item.dataset.region === pendingArea);
+      });
+      regionConfirm.disabled = !pendingArea;
       regionSheet.classList.add("is-open");
       regionSheet.setAttribute("aria-hidden", "false");
     }
@@ -1447,49 +2482,137 @@
       regionSheet.setAttribute("aria-hidden", "true");
     }
 
-    let pendingArea = "";
-    document.querySelectorAll("[data-region]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-region]").forEach((item) => item.classList.remove("is-selected"));
-        button.classList.add("is-selected");
-        pendingArea = button.dataset.region;
-        regionConfirm.disabled = false;
-      });
-    });
-    regionConfirm.addEventListener("click", () => {
-      if (!pendingArea) return;
-      state.area = pendingArea;
-      closeRegionSheet();
-      render(4);
-    });
-    regionClose.addEventListener("click", closeRegionSheet);
-    regionSheet.addEventListener("click", (event) => {
-      if (event.target === regionSheet) closeRegionSheet();
-    });
+    function openFactorySheet(mode, searchArea) {
+      const isRegionSearch = mode === "region";
+      const displayArea = searchArea || (isRegionSearch ? state.factorySearchArea : state.area) || "서울특별시 강남구";
+      if (factoryDialog) factoryDialog.classList.toggle("is-region-search", isRegionSearch);
+      if (factoryLocationLabel) factoryLocationLabel.textContent = isRegionSearch ? "검색 지역:" : "고객 위치:";
+      if (factoryLocationText) factoryLocationText.textContent = displayArea;
+      if (factoryNotice) {
+        factoryNotice.innerHTML = isRegionSearch ? "선택한 <strong>지역 기준</strong> DB·KB DRP 협력 공장 목록이에요." : "검색반경 <strong>5km 이내</strong> DB·KB DRP 협력 공장 목록이에요.";
+      }
+      factorySheet.classList.add("is-open");
+      factorySheet.setAttribute("aria-hidden", "false");
+    }
+
+    function closeFactorySheet() {
+      factorySheet.classList.remove("is-open");
+      factorySheet.setAttribute("aria-hidden", "true");
+    }
 
     function openVehicleModal() {
       syncHeader();
       vehicleModal.classList.add("is-open");
       vehicleModal.setAttribute("aria-hidden", "false");
     }
+
     function closeVehicleModal() {
       vehicleModal.classList.remove("is-open");
       vehicleModal.setAttribute("aria-hidden", "true");
     }
+
+    function openSummaryEditModal() {
+      editCarNumber.value = state.carNumber || "12가1111";
+      editCarName.value = state.carName || "셀토스";
+      editSupport.value = state.support;
+      editArea.value = state.area || "서울특별시 강남구";
+      editRepairShop.value = state.repairShop || "광진 오토케어";
+      editPhone.value = state.phone || "010-1234-5678";
+      summaryEditModal.classList.add("is-open");
+      summaryEditModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeSummaryEditModal() {
+      summaryEditModal.classList.remove("is-open");
+      summaryEditModal.setAttribute("aria-hidden", "true");
+    }
+
+    function openCostInfoModal() {
+      costInfoModal.classList.add("is-open");
+      costInfoModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeCostInfoModal() {
+      costInfoModal.classList.remove("is-open");
+      costInfoModal.setAttribute("aria-hidden", "true");
+    }
+
+    document.querySelectorAll("[data-region]").forEach(function(button) {
+      button.addEventListener("click", function() {
+        document.querySelectorAll("[data-region]").forEach(function(item) { item.classList.remove("is-selected"); });
+        button.classList.add("is-selected");
+        pendingArea = button.dataset.region;
+        regionConfirm.disabled = false;
+      });
+    });
+
+    regionConfirm.addEventListener("click", function() {
+      if (!pendingArea) return;
+      if (regionSheetMode === "factory") {
+        state.factorySearchArea = pendingArea;
+        closeRegionSheet();
+        openFactorySheet("region", pendingArea);
+        return;
+      }
+      state.area = pendingArea;
+      closeRegionSheet();
+      render(4);
+    });
+    regionClose.addEventListener("click", closeRegionSheet);
+    regionSheet.addEventListener("click", function(event) { if (event.target === regionSheet) closeRegionSheet(); });
+
+    if (factoryClose) factoryClose.addEventListener("click", closeFactorySheet);
+    if (factorySheet) {
+      factorySheet.addEventListener("click", function(event) { if (event.target === factorySheet) closeFactorySheet(); });
+      factorySheet.querySelectorAll(".radius-chip").forEach(function(button) {
+        button.addEventListener("click", function() {
+          factorySheet.querySelectorAll(".radius-chip").forEach(function(item) { item.classList.remove("is-active"); });
+          button.classList.add("is-active");
+        });
+      });
+      factorySheet.querySelectorAll("[data-shop]").forEach(function(card) {
+        card.addEventListener("click", function() {
+          factorySheet.querySelectorAll("[data-shop]").forEach(function(item) { item.classList.remove("is-selected"); });
+          card.classList.add("is-selected");
+          state.repairShop = card.dataset.shop;
+          closeFactorySheet();
+          advanceAfterSelection(function() { render(8); });
+        });
+      });
+    }
+
     editVehicleBtn.addEventListener("click", openVehicleModal);
     vehicleClose.addEventListener("click", closeVehicleModal);
-    vehicleModal.addEventListener("click", (event) => {
-      if (event.target === vehicleModal) closeVehicleModal();
-    });
-    vehicleSave.addEventListener("click", () => {
-      const typeMatch = modalCarType.value.match(/\((.*?)\)/);
+    vehicleModal.addEventListener("click", function(event) { if (event.target === vehicleModal) closeVehicleModal(); });
+    vehicleSave.addEventListener("click", function() {
+      const typeMatch = modalCarType.value.match(/((.*?))/);
       state.carNumber = modalCarNumber.value.trim() || state.carNumber || "12가1111";
       state.carName = modalCarName.value.trim() || state.carName;
       state.carType = typeMatch?.[1] || modalCarType.value.trim() || state.carType;
+      state.carCc = modalCc.value || state.carCc;
+      state.carYear = modalYear.value || state.carYear;
       syncHeader();
       closeVehicleModal();
       render(state.step);
     });
+
+    summaryEditClose.addEventListener("click", closeSummaryEditModal);
+    summaryEditModal.addEventListener("click", function(event) { if (event.target === summaryEditModal) closeSummaryEditModal(); });
+    summaryEditSave.addEventListener("click", function() {
+      state.carNumber = editCarNumber.value.trim() || state.carNumber || "12가1111";
+      state.carName = editCarName.value.trim() || state.carName || "셀토스";
+      state.support = editSupport.value;
+      state.area = editArea.value.trim() || state.area || "서울특별시 강남구";
+      state.repairShop = editRepairShop.value.trim() || state.repairShop || "광진 오토케어";
+      state.phone = editPhone.value.trim() || state.phone || "010-1234-5678";
+      syncHeader();
+      closeSummaryEditModal();
+      render(9);
+    });
+
+    costInfoClose.addEventListener("click", closeCostInfoModal);
+    costInfoConfirm.addEventListener("click", closeCostInfoModal);
+    costInfoModal.addEventListener("click", function(event) { if (event.target === costInfoModal) closeCostInfoModal(); });
 
     render(1, true);
   </script>
