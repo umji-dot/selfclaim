@@ -165,16 +165,23 @@
       align-self: flex-start;
     }
     .message.bot + .message.bot.bot-followup {
-      margin-top: -16px;
+      margin-top: -12px;
     }
     .message.bot + .result-card {
-      margin-top: -16px;
+      margin-top: -12px;
     }
     .result-card + .message.bot {
       margin-top: -24px;
     }
+    .result-card + .result-card,
+    .summary-card + .message.bot,
+    .message.bot + .summary-card {
+      margin-top: -12px;
+    }
     .message.user { align-self: flex-end; }
-    .message.user + .message.user { margin-top: -16px; }
+    .message.user + .message.bot { margin-top: 0; }
+    .message.user.vehicle-confirm-reply + .message.bot { margin-top: 0; }
+    .message.user + .message.user { margin-top: -12px; }
 
     .bot-avatar {
       display: grid;
@@ -422,8 +429,8 @@
       align-self: flex-start;
       width: auto;
       max-width: 100%;
-      margin-top: -16px;
-      margin-bottom: -16px;
+      margin-top: 0;
+      margin-bottom: 0;
       padding: 0;
       border: 0;
       border-radius: 0;
@@ -441,6 +448,9 @@
       flex-wrap: wrap;
       justify-content: flex-start;
       gap: 8px;
+      margin-top: 0;
+    }
+    .support-inline-card .bubble-action-grid {
       margin-top: 0;
     }
 
@@ -477,10 +487,21 @@
     }
     .support-inline-card.user-choice-panel {
       align-self: flex-end;
-      margin-top: 16px;
+      margin-top: 0;
+    }
+    .message.bot + .support-inline-card.user-choice-panel {
+      margin-top: 0;
+    }
+    .result-card + .support-inline-card.user-choice-panel {
+      margin-top: 0;
     }
     .support-inline-card.user-choice-panel .bubble-choice-list {
       justify-content: flex-end;
+    }
+    .message.user + .support-inline-card.user-choice-panel,
+    .support-inline-card.user-choice-panel + .message.user,
+    .support-inline-card.user-choice-panel + .support-inline-card.user-choice-panel {
+      margin-top: -12px;
     }
     .cost-inline-amount {
       color: var(--primary);
@@ -836,16 +857,23 @@
       color: var(--black);
       font-size: 16px;
       line-height: 24px;
-      font-weight: 400;
+      font-weight: 700;
       white-space: nowrap;
     }
     .result-meta strong {
       color: var(--black);
-      font-weight: 400;
+      font-weight: 700;
     }
     .result-meta-detail {
       display: inline;
       margin-top: 0;
+      font-weight: 700;
+    }
+    .result-helper {
+      margin: 8px 0 0;
+      color: var(--black);
+      font-size: 16px;
+      line-height: 24px;
       font-weight: 400;
     }
 
@@ -1445,9 +1473,19 @@
       box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
     }
     .terms-inline {
-      margin-top: 14px;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #F7F8FA;
     }
-    .terms-inline .primary-btn { margin-top: 24px; }
+    .terms-inline .primary-btn {
+      width: 100%;
+      height: 48px;
+      margin-top: 12px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 800;
+    }
     .terms-section-title {
       margin: 0 0 12px;
       font-size: 16px;
@@ -1458,25 +1496,36 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      height: 52px;
-      padding: 0 16px;
+      min-height: 52px;
+      padding: 0 14px;
       border-radius: 12px;
-      background: var(--ai-muted);
+      background: var(--white);
       color: var(--black);
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 800;
       cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(0, 132, 73, 0.10);
     }
-    .terms-list { margin-top: 8px; padding: 0 4px; }
+    .terms-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 0;
+    }
     .terms-line {
       display: grid;
       grid-template-columns: 24px 1fr auto;
       align-items: center;
-      gap: 8px;
-      min-height: 40px;
+      gap: 10px;
+      min-height: 44px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--white);
       color: var(--gray-1);
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
       cursor: pointer;
     }
     .inline-check {
@@ -1492,10 +1541,10 @@
     }
     .inline-check::after {
       content: "";
-      width: 14px;
-      height: 8px;
-      border-left: 2px solid var(--gray-3);
-      border-bottom: 2px solid var(--gray-3);
+      width: 13px;
+      height: 7px;
+      border-left: 2.4px solid var(--gray-3);
+      border-bottom: 2.4px solid var(--gray-3);
       transform: rotate(-45deg) translateY(-2px);
     }
     .inline-check:checked::after { border-color: var(--primary); }
@@ -1503,8 +1552,9 @@
       border: 0;
       background: transparent;
       color: var(--gray-2);
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
       text-decoration: underline;
       text-underline-offset: 2px;
     }
@@ -1512,126 +1562,31 @@
     .done {
       width: 100%;
       margin-top: 4px;
-      padding: 20px;
-      border-radius: 12px;
-      background: var(--white);
-      text-align: left;
-      box-shadow: 0 12px 28px rgba(32, 33, 36, 0.06);
-    }
-    .done-icon {
-      display: inline-grid;
-      place-items: center;
-      width: 40px;
-      height: 40px;
-      margin: 0 0 16px;
-      border-radius: 12px;
-      background: var(--primary-box);
-      color: var(--primary);
-    }
-    .done-icon svg { width: 22px; height: 22px; stroke-width: 2.5; }
-    .done h1 {
-      margin: 0 0 10px;
-      font-size: 24px;
-      line-height: 32px;
-      font-weight: 700;
-    }
-    .done p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 22px;
-      color: var(--gray-2);
-    }
-    .done-status {
-      margin-top: 18px;
-      padding-top: 14px;
-      border-top: 1px solid var(--gray-5);
-    }
-    .done-status-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      min-height: 32px;
-    }
-    .done-status-row span:first-child {
-      color: var(--gray-2);
-      font-size: 15px;
-      line-height: 22px;
-      font-weight: 500;
-    }
-    .done-status-row strong {
-      color: var(--black);
-      font-size: 15px;
-      line-height: 22px;
-      font-weight: 600;
-    }
-    .done-note {
-      margin-top: 14px;
       padding: 0;
       border-radius: 0;
       background: transparent;
-      color: var(--gray-2);
-      font-size: 13px;
-      line-height: 20px;
-      font-weight: 400;
-    }
-    .process-info {
-      display: grid;
-      gap: 10px;
-      width: 100%;
-      margin-top: 18px;
       text-align: left;
+      box-shadow: none;
     }
-    .process-step {
-      display: grid;
-      grid-template-columns: 44px 1fr;
-      gap: 12px;
-      align-items: center;
-      padding: 14px;
-      border-radius: 12px;
-      background: #F4F4F6;
-    }
-    .process-icon {
-      display: grid;
-      place-items: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: var(--primary-box);
-      color: var(--primary);
-      font-size: 22px;
-      font-weight: 800;
-    }
-    .process-copy strong {
-      display: block;
-      color: var(--black);
-      font-size: 14px;
-      line-height: 21px;
-      font-weight: 400;
-    }
-    .process-copy span {
-      display: block;
-      color: var(--gray-2);
-      font-size: 13px;
-      line-height: 20px;
-      font-weight: 400;
-    }
-    .done-summary {
-      display: grid;
-      gap: 12px;
-      margin-top: 18px;
-    }
-    .done-summary-group {
+    .done-message {
+      display: inline-block;
+      max-width: 88%;
       padding: 14px 16px;
-      border-radius: 12px;
-      background: #F4F4F6;
-    }
-    .done-summary-title {
-      margin: 0 0 8px;
+      border-radius: 24px;
+      background: var(--white);
       color: var(--black);
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 800;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 400;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+    .done-message + .done-message {
+      margin-top: 12px;
+    }
+    .done-message strong {
+      font-weight: 700;
     }
 
     .sheet-backdrop {
@@ -1880,15 +1835,6 @@
     .support-inline-card .bubble-choice-copy { display: none; }
     .result-card-detail .result-edit-btn { margin-top: 16px; }
     .bubble-action-grid .bubble-action-btn { height: auto; }
-    .done .process-info svg {
-      width: 22px;
-      height: 22px;
-      stroke: currentColor;
-      stroke-width: 2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
 
     @media (max-width: 360px) {
       main { padding-inline: 14px; }
@@ -2206,10 +2152,12 @@
       repairMode: "recommend",
       repairShop: "광진 오토케어",
       phone: "",
+      authCode: "",
       request: "",
       repairDays: "",
       faultRate: 0,
-      faultSelected: false
+      faultSelected: false,
+      vehicleConfirmEditPending: false
     };
 
     const progressMap = {
@@ -2364,6 +2312,7 @@
       edit.textContent = "연락처 수정";
       edit.addEventListener("click", function() {
         state.phone = "";
+        state.authCode = "";
         render(4);
       });
       bubble.appendChild(edit);
@@ -2398,27 +2347,29 @@
       if (modalYear) modalYear.value = state.carYear;
     }
 
-    function resultCard() {
-      const carNumber = state.carNumber || "12가1111";
+    function resultCardMarkup(showHelper) {
       const html = [
-        '<p class="result-meta"><strong>' + escapeHTML(carNumber) + '</strong> · ' + escapeHTML(state.carName) + '<span class="result-meta-detail"> · ' + escapeHTML(state.carType) + ' · ' + escapeHTML(state.carCc) + ' · ' + escapeHTML(state.carYear) + '</span></p>',
-        '<button class="result-edit-btn" id="resultVehicleEdit" type="button">차량 정보 수정하기</button>'
-      ].join('');
-      const card = block(html, "result-card result-card-detail");
-      const edit = card.querySelector("#resultVehicleEdit");
-      if (edit) edit.addEventListener("click", openVehicleModal);
-      return card;
+        '<p class="result-meta"><strong>' + escapeHTML(state.carName) + '</strong><span class="result-meta-detail"> · ' + escapeHTML(state.carType) + ' · ' + escapeHTML(state.carCc) + ' · ' + escapeHTML(state.carYear) + '</span></p>'
+      ];
+      if (showHelper !== false) {
+        html.push('<p class="result-helper">조회한 차량 정보가 일치하시나요?</p>');
+      }
+      return html.join('');
+    }
+
+    function resultCard(showHelper) {
+      return block(resultCardMarkup(showHelper), "result-card result-card-detail");
     }
 
     function commonIntro(animated, onComplete) {
       if (!animated) {
         botText("고객님, 갑작스러운 사고로 많이 놀라셨죠? 👀", false);
-        const secondBubble = botText("차량번호만 입력하면 렌터카와 교통비 지원 가능 여부를 바로 확인해드릴게요.", false);
+        const secondBubble = botText("렌터카 신청과 예상 교통비 조회를 위해 차량 번호를 입력해 주세요.", false);
         if (onComplete) onComplete(secondBubble);
         return;
       }
       botText("고객님, 갑작스러운 사고로 많이 놀라셨죠? 👀", true, function() {
-        botText("차량번호만 입력하면 렌터카와 교통비 지원 가능 여부를 바로 확인해드릴게요.", true, onComplete);
+        botText("렌터카 신청과 예상 교통비 조회를 위해 차량 번호를 입력해 주세요.", true, onComplete);
       });
     }
 
@@ -2442,9 +2393,7 @@
         focusUserReply();
         botText("차량 정보 조회가 완료되었어요!", true, function() {
           resultCard();
-          botText("수리 기간 동안 어떤 지원이 필요하세요?", true, function() {
-            renderSupportChoice(false, true);
-          });
+          renderVehicleConfirmChoice();
         });
         return;
       }
@@ -2452,13 +2401,16 @@
       resultCard();
 
       if (state.step >= 3) {
+        botText("수리 기간 동안 어떤 지원이 필요하세요?", false);
         userText(state.support === "rental" ? "렌터카 신청하기" : "예상 교통비 알아보기");
       }
 
       if (state.support === "traffic") {
         if (state.step === 3) renderTrafficCostInput();
         if (state.step >= 4) {
+          botText("예상 수리기간을 선택해 주세요.", false);
           userText((state.repairDays || "2") + "일");
+          botText("예상 과실을 선택해 주세요.", false);
           userText(getFaultLabel(state.faultRate));
         }
         if (state.step === 4) renderCostResult();
@@ -2466,14 +2418,28 @@
       }
 
       if (state.step === 3) renderAreaChoice();
-      if (state.step >= 4) userText(state.area || "서울특별시 강남구");
+      if (state.step >= 4) {
+        botText("렌터카를 받으실 지역을 선택해 주세요!", false);
+        userText(state.area || "서울특별시 강남구");
+      }
       if (state.step === 4) renderPhoneAuth();
-      if (state.step >= 5) userPhoneText(state.phone || "010-1234-5678");
+      if (state.step >= 5) {
+        botText("연락드릴 휴대폰 번호를 알려주세요.", false);
+        userPhoneText(state.phone || "010-1234-5678");
+        botText("입력하신 번호로 인증번호를 발송했습니다. 인증번호를 입력해 주세요.", false);
+        userText(state.authCode || "123456");
+      }
       if (state.step === 5) renderRepairMode();
-      if (state.step >= 6) userText(state.repairMode === "recommend" ? "가까운 수리점 추천받을게요" : "공업사를 이미 정했어요");
+      if (state.step >= 6) {
+        botText("사고 차량 공업사를 정하셨나요?", false);
+        userText(state.repairMode === "recommend" ? "협력 공업사 추천" : "이미 정했어요");
+      }
       if (state.step === 6) renderShopRecommend();
       if (state.step === 7) renderShopDirect();
-      if (state.step >= 8) userText(state.repairShop || "광진 오토케어");
+      if (state.step >= 8) {
+        if (state.repairMode === "direct") botText("방문하실 공업사명을 입력해 주세요!", false);
+        userText(state.repairShop || "광진 오토케어");
+      }
       if (state.step === 8) renderRequestDetails();
       if (state.step >= 9 && state.request) userText(state.request);
       if (state.step === 9) renderFinal();
@@ -2481,13 +2447,12 @@
     }
 
     function renderCarLookup(bubble) {
-      userText("차량 번호를 입력해 주세요");
       const form = document.createElement("div");
       form.className = "bubble-form";
       form.innerHTML = [
         '<div class="field">',
         '<label class="field-label" for="carNumber">차량번호</label>',
-        '<input class="input" id="carNumber" placeholder="차량번호를 입력해 주세요" inputmode="text" autocomplete="off">',
+        '<input class="input" id="carNumber" placeholder="차량번호 입력 (예:12가1234)" inputmode="text" autocomplete="off">',
         '</div>',
         '<button class="primary-btn" id="lookupBtn" type="button" disabled>차량 조회하기</button>'
       ].join('');
@@ -2507,6 +2472,35 @@
       });
     }
 
+    function renderVehicleConfirmChoice() {
+      const box = panel([
+        '<div class="bubble-choice-list">',
+        '<button class="bubble-choice-btn" type="button" data-vehicle-confirm="match"><span class="bubble-choice-title">✅ 일치해요</span></button>',
+        '<button class="bubble-choice-btn" type="button" data-vehicle-confirm="edit"><span class="bubble-choice-title">✍️ 수정하기</span></button>',
+        '</div>'
+      ].join(''), "support-inline-card user-choice-panel vehicle-confirm-panel");
+      const matchBtn = box.querySelector('[data-vehicle-confirm="match"]');
+      const editBtn = box.querySelector('[data-vehicle-confirm="edit"]');
+      matchBtn.addEventListener("click", function() {
+        box.remove();
+        const reply = userText("✅ 일치해요");
+        reply.closest(".message")?.classList.add("vehicle-confirm-reply");
+        advanceAfterSelection(function() {
+          botText("수리 기간 동안 어떤 지원이 필요하세요?", true, function() {
+            renderSupportChoice(false, true);
+          });
+        });
+      });
+      editBtn.addEventListener("click", function() {
+        box.remove();
+        const reply = userText("✍️ 수정하기");
+        reply.closest(".message")?.classList.add("vehicle-confirm-reply");
+        state.vehicleConfirmEditPending = true;
+        openVehicleModal();
+      });
+      focusUserReply();
+    }
+
     function renderSupportChoice(animate, skipQuestion) {
       const showOptions = function() {
         const box = panel([
@@ -2523,9 +2517,9 @@
         ].join(''), "support-inline-card user-choice-panel");
         box.querySelectorAll("[data-support]").forEach(function(btn) {
           btn.addEventListener("click", function() {
-            box.querySelectorAll("[data-support]").forEach(function(item) { item.classList.remove("is-selected"); });
-            btn.classList.add("is-selected");
             state.support = btn.dataset.support;
+            box.remove();
+            userText(state.support === "rental" ? "렌터카 신청하기" : "예상 교통비 알아보기");
             advanceAfterSelection(function() { render(3); });
           });
         });
@@ -2539,7 +2533,7 @@
     }
 
     function renderAreaChoice() {
-      botText("렌터카를 받을 지역을 알려주세요.\n배송 가능한 가까운 협력 공업사를 우선 찾아드릴게요!", true, function(bubble) {
+      botText("렌터카를 받으실 지역을 선택해 주세요!", true, function(bubble) {
         const actions = panel(
           '<div class="bubble-action-grid"><button class="bubble-action-btn" id="areaSelect" type="button">🗺️ 지역 선택하기</button></div>',
           "support-inline-card user-choice-panel"
@@ -2552,19 +2546,21 @@
     function renderTrafficCostInput() {
       botText("교통비 조회를 위해 차량의 예상 수리기간을 알려주세요.", true, function() {
         botText("예상 수리기간을 선택해 주세요.", true, function(bubble) {
-          appendSelectTrigger(bubble, "🗓️ 예상 수리기간 선택", function() {
+          appendSelectTrigger(bubble, "🗓️ 예상 수리기간 선택", function(actions) {
             openOptionSheet("예상 수리기간을 선택해 주세요", ["1", "2", "3", "4", "5", "7", "10", "14", "20", "25"].map(function(day) {
               return { label: day + "일", value: day };
             }), state.repairDays, function(value, label) {
               state.repairDays = value;
+              actions.remove();
               userText(label);
               botText("예상 과실을 선택해 주세요.", true, function(faultBubble) {
-                appendSelectTrigger(faultBubble, "⚠️ 예상 과실 선택", function() {
+                appendSelectTrigger(faultBubble, "⚠️ 예상 과실 선택", function(faultActions) {
                   openOptionSheet("예상 과실을 선택해 주세요", [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(function(rate) {
                     return { label: getFaultLabel(rate), value: String(rate) };
                   }), String(state.faultRate), function(faultValue, faultLabel) {
                     state.faultRate = Number(faultValue);
                     state.faultSelected = true;
+                    faultActions.remove();
                     userText(faultLabel);
                     advanceAfterSelection(function() { render(4); });
                   });
@@ -2583,7 +2579,7 @@
         '<div class="bubble-choice-list"><button class="bubble-choice-btn" type="button"><span class="bubble-choice-title">' + escapeHTML(label) + '</span></button></div>',
         "support-inline-card user-choice-panel"
       );
-      actions.querySelector("button").addEventListener("click", onClick);
+      actions.querySelector("button").addEventListener("click", function() { onClick(actions); });
       updateBubbleRadius(bubble);
     }
 
@@ -2624,7 +2620,7 @@
         form.className = "bubble-form";
         form.innerHTML = [
           '<div class="field"><label class="field-label" for="phoneAuthInput">휴대폰 번호</label><div class="auth-row">',
-          '<input class="input" id="phoneAuthInput" placeholder="010-0000-0000" inputmode="tel" autocomplete="tel">',
+          '<input class="input" id="phoneAuthInput" placeholder="휴대폰 번호 입력 (숫자만 입력)" inputmode="tel" autocomplete="tel">',
           '<button class="primary-btn" id="phoneNextBtn" type="button" disabled>다음</button>',
           '</div></div>'
         ].join('');
@@ -2641,6 +2637,7 @@
         next.addEventListener("click", function() {
           if (!phone.value.trim()) { phone.focus(); return; }
           state.phone = phone.value.trim();
+          state.authCode = "";
           phonePanel.remove();
           userText(state.phone);
           botText("입력하신 번호로 인증번호를 발송했습니다. 인증번호를 입력해 주세요.", true, function(authBubble) {
@@ -2664,7 +2661,7 @@
             authForm.className = "bubble-form";
             authForm.innerHTML = [
               '<div class="field"><label class="field-label" for="authCodeInput">인증번호</label>',
-              '<input class="input" id="authCodeInput" placeholder="인증번호를 입력해 주세요" inputmode="numeric" maxlength="6" autocomplete="one-time-code">',
+              '<input class="input" id="authCodeInput" placeholder="인증번호 입력 (6자리)" inputmode="numeric" maxlength="6" autocomplete="one-time-code">',
               '</div>',
               '<button class="primary-btn" id="phoneAuthNext" type="button" disabled>입력 완료</button>'
             ].join('');
@@ -2676,6 +2673,7 @@
             });
             authNext.addEventListener("click", function() {
               if (!code.value.trim()) { code.focus(); return; }
+              state.authCode = code.value.trim();
               render(5);
             });
           });
@@ -2691,12 +2689,12 @@
           '<button class="bubble-choice-btn" type="button" data-repair="recommend"><span><span class="bubble-choice-title">🤝 협력 공업사 추천</span><span class="bubble-choice-copy">고객님 근처의 협력 공장을 추천해 드릴게요!</span></span></button>',
           '<button class="bubble-choice-btn" type="button" data-repair="direct"><span><span class="bubble-choice-title">✋ 이미 정했어요</span><span class="bubble-choice-copy">이미 공업사를 선택하신 경우</span></span></button>',
           '</div>'
-        ].join(''), "support-inline-card");
+        ].join(''), "support-inline-card user-choice-panel");
         actions.querySelectorAll("[data-repair]").forEach(function(btn) {
           btn.addEventListener("click", function() {
-            actions.querySelectorAll("[data-repair]").forEach(function(item) { item.classList.remove("is-selected"); });
-            btn.classList.add("is-selected");
             state.repairMode = btn.dataset.repair;
+            actions.remove();
+            userText(state.repairMode === "recommend" ? "협력 공업사 추천" : "이미 정했어요");
             advanceAfterSelection(function() { render(state.repairMode === "recommend" ? 6 : 7); });
           });
         });
@@ -2713,7 +2711,7 @@
     }
 
     function renderShopDirect() {
-      botText("정해진 수리점명을 입력해 주세요. 업체에게 바로 전달할게요.", true, function(bubble) {
+      botText("방문하실 공업사명을 입력해 주세요!", true, function(bubble) {
         const form = document.createElement("div");
         form.className = "bubble-form";
         form.innerHTML = '<div class="field"><label class="field-label" for="repairShopInput">수리점명</label><input class="input" id="repairShopInput" placeholder="예) 광진 오토케어" autocomplete="off"></div><button class="primary-btn" id="directNext" type="button" disabled>입력 완료</button>';
@@ -2774,15 +2772,24 @@
           '<div class="summary-section"><p class="summary-section-title">공업사 정보</p>',
           '<div class="summary-row"><span class="summary-label">공업사명</span><span class="summary-value">카닥터</span></div>',
           '<div class="summary-row"><span class="summary-label">공업사 위치</span><span class="summary-value">서울시 강남구 테헤란로 123</span></div>',
-          '<div class="summary-row"><span class="summary-label">공업사 연락처</span><span class="summary-value">02-0000-1111</span></div></div>',
-          '<div class="summary-actions"><button class="primary-btn" id="summaryConfirm" type="button">내용을 확인했습니다</button><button class="secondary-btn" id="summaryEditOpen" type="button">정보 수정하기</button></div>'
+          '<div class="summary-row"><span class="summary-label">공업사 연락처</span><span class="summary-value">02-0000-1111</span></div></div>'
         ].join(''), "summary-card");
-        summary.querySelector("#summaryConfirm").addEventListener("click", function(event) {
-          event.currentTarget.disabled = true;
-          summary.querySelector("#summaryEditOpen").disabled = true;
+        const actions = panel([
+          '<div class="bubble-choice-list">',
+          '<button class="bubble-choice-btn" type="button" id="summaryConfirm"><span class="bubble-choice-title">✅ 확인했어요</span></button>',
+          '<button class="bubble-choice-btn" type="button" id="summaryEditOpen"><span class="bubble-choice-title">✍️ 내용 수정하기</span></button>',
+          '</div>'
+        ].join(''), "support-inline-card user-choice-panel");
+        actions.querySelector("#summaryConfirm").addEventListener("click", function() {
+          actions.remove();
+          userText("✅ 확인했어요");
           renderTermsBubble();
         });
-        summary.querySelector("#summaryEditOpen").addEventListener("click", openSummaryEditModal);
+        actions.querySelector("#summaryEditOpen").addEventListener("click", function() {
+          actions.remove();
+          userText("✍️ 내용 수정하기");
+          openSummaryEditModal();
+        });
         focusUserReply();
       });
     }
@@ -2822,29 +2829,9 @@
 
     function renderDone() {
       block([
-        '<div class="done-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12l4 4 10-10" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>',
-        '<h1>렌터카 신청이<br>완료되었어요</h1>',
-        '<p>렌터카 배정과 사고 차량 수리점 정보를 알림톡으로 안내드릴게요.</p>',
-        '<div class="process-info">',
-        processStep('<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.6 2.6a2 2 0 0 1-.45 2.11L8 9.7a16 16 0 0 0 6.3 6.3l1.27-1.27a2 2 0 0 1 2.11-.45c.83.28 1.7.48 2.6.6A2 2 0 0 1 22 16.92z"></path></svg>', '담당자가 신속하게 고객님에게 연락드릴게요!', ''),
-        processStep('<svg viewBox="0 0 24 24"><path d="M3 17h13l4-5h-7l-2-4H7l-4 9z"></path><path d="M6 17a2 2 0 1 0 4 0"></path><path d="M16 17a2 2 0 1 0 4 0"></path></svg>', '고객님의 사고 차량을 안전하게 공업사로 입고할게요!', ''),
-        processStep('<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5 5L3 18v3h3l6.7-6.7a4 4 0 0 0 5-5l-2.4 2.4-3-3 2.4-2.4z"></path></svg>', '차량 수리 후 고객님께 신속하게 연락드릴게요!', ''),
-        '</div>',
-        '<div class="done-summary">',
-        '<div class="done-summary-group"><p class="done-summary-title">렌터카 정보</p>',
-        '<div class="done-status-row"><span>렌터카 받을 지역</span><strong>' + escapeHTML(state.area || "서울시 강남구") + '</strong></div>',
-        '<div class="done-status-row"><span>고객님 연락처</span><strong>' + escapeHTML(state.phone || "010-1234-5678") + '</strong></div></div>',
-        '<div class="done-summary-group"><p class="done-summary-title">공업사 정보</p>',
-        '<div class="done-status-row"><span>공업사명</span><strong>카닥터</strong></div>',
-        '<div class="done-status-row"><span>공업사 위치</span><strong>서울시 강남구 테헤란로 123</strong></div>',
-        '<div class="done-status-row"><span>공업사 연락처</span><strong>02-0000-1111</strong></div></div>',
-        '</div>',
-        '<div class="done-note">• 렌트 차량은 자차/종합보험(대인·대물·자손)에 가입되어 있어요.<br>• 취소·변경은 배정된 렌터카 업체로 문의해 주세요.</div>'
+        '<div class="done-message"><strong>✅ 렌터카 신청이 완료되었습니다!</strong><br>렌터카 배정과 사고 차량 공업사 정보를 알림톡으로 안내해드릴게요.</div>',
+        '<div class="done-message"><strong>🚗 렌터카 정보</strong><br>신청 지역: ' + escapeHTML(state.area || "서울특별시 중랑구") + '<br>고객님 연락처: ' + escapeHTML(state.phone || "0101234456") + '<br><br><strong>👨‍🔧 공업사 정보</strong><br>공업사명: 카닥터<br>위치: 서울시 강남구 테헤란로 123<br>공업사 연락처: 02-1234-5678<br><br>• 렌트 차량은 자차/종합보험(대인·대물·자손)에 가입되어 있어요.<br>• 취소·변경은 배정된 렌터카 업체로 문의해 주세요.</div>'
       ].join(''), "done");
-    }
-
-    function processStep(icon, title, copy) {
-      return '<div class="process-step"><span class="process-icon">' + icon + '</span><span class="process-copy"><strong>' + title + '</strong>' + (copy ? '<span>' + copy + '</span>' : '') + '</span></div>';
     }
 
     function openRegionSheet(mode) {
@@ -2916,7 +2903,8 @@
       vehicleModal.setAttribute("aria-hidden", "false");
     }
 
-    function closeVehicleModal() {
+    function closeVehicleModal(clearPending) {
+      if (clearPending !== false) state.vehicleConfirmEditPending = false;
       vehicleModal.classList.remove("is-open");
       vehicleModal.setAttribute("aria-hidden", "true");
     }
@@ -3016,7 +3004,16 @@
       state.carCc = modalCc.value || state.carCc;
       state.carYear = modalYear.value || state.carYear;
       syncHeader();
-      closeVehicleModal();
+      closeVehicleModal(false);
+      if (state.step === 2 && state.vehicleConfirmEditPending) {
+        state.vehicleConfirmEditPending = false;
+        const card = chatLog.querySelector(".result-card-detail");
+        if (card) card.innerHTML = resultCardMarkup(false);
+        botText("조회한 차량 정보가 일치하시나요?", true, function() {
+          renderVehicleConfirmChoice();
+        });
+        return;
+      }
       render(state.step);
     });
 
