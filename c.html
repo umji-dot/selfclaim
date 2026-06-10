@@ -25,7 +25,7 @@ input,textarea,select{font-family:inherit;}
 /* Header */
 .hdr{flex-shrink:0;height:52px;background:#fff;border-bottom:1px solid #eee;display:flex;align-items:center;padding:0 16px;gap:10px;}
 .hdr-logo .logo-text{font-size:16px;font-weight:800;color:var(--brand);}
-.hdr-exit{margin-left:auto;font-size:12px;color:var(--cap);cursor:pointer;padding:6px 10px;}
+.hdr-exit{margin-left:auto;font-size:12px;color:var(--cap);cursor:pointer;padding:6px 10px;border-radius:12px;border:1px solid var(--border);background:#fff;}
 
 /* Vehicle bar */
 .vbar{flex-shrink:0;display:none;align-items:center;padding:10px 16px;background:#fff;border-bottom:1px solid #eee;gap:8px;}
@@ -51,12 +51,12 @@ input,textarea,select{font-family:inherit;}
 
 /* Action pill */
 .m-action{display:flex;justify-content:flex-end;margin-bottom:14px;animation:msgUp .35s cubic-bezier(.16,1,.3,1);}
-.m-action button{height:44px;padding:0 22px;border-radius:22px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.12);}
+.m-action button{height:44px;padding:0 22px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:14px;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.12);}
 .m-action button:active{background:var(--primary-dark);transform:scale(.97);}
 
 /* Quick choices */
 .m-choices{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-bottom:14px;animation:msgUp .35s cubic-bezier(.16,1,.3,1);}
-.m-choices button{height:42px;padding:0 18px;border-radius:21px;font-size:13px;font-weight:600;border:none;transition:all .15s;}
+.m-choices button{height:42px;padding:0 18px;border-radius:12px;font-size:13px;font-weight:600;border:none;transition:all .15s;}
 .m-choices .c-fill{background:var(--primary);color:#fff;}
 .m-choices .c-fill:active{background:var(--primary-dark);}
 .m-choices .c-line{background:#fff;color:var(--body);border:1.5px solid var(--border);}
@@ -76,15 +76,15 @@ input,textarea,select{font-family:inherit;}
 
 /* Plate input card */
 .plate-input-card{margin:4px 0 14px 0;background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);animation:msgUp .35s cubic-bezier(.16,1,.3,1);}
-.pic-box{display:flex;align-items:center;border:2px solid #333;border-radius:10px;padding:10px 14px;gap:6px;margin-bottom:10px;background:#fff;transition:border-color .2s;}
+.pic-box{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;gap:6px;margin-bottom:10px;background:#fff;transition:border-color .2s;}
 .pic-box::before{display:none;}
-.pic-box input{flex:1;border:none;outline:none;font-size:22px;font-weight:700;color:var(--text);text-align:center;letter-spacing:2px;background:transparent;}
+.pic-box input{display:block;width:100%;flex:1;border:none;outline:none;font-size:22px;font-weight:700;color:var(--text);text-align:center;letter-spacing:2px;background:transparent;}
 .pic-box input::placeholder{color:var(--placeholder);font-weight:400;font-size:15px;letter-spacing:0;}
-.pic-box.err{border-color:var(--error);}
+.pic-box.err{border-color:var(--border);}
 .pic-err{display:none;font-size:12px;color:var(--error);margin-bottom:8px;line-height:1.5;}
 .pic-loading{display:none;font-size:13px;color:var(--cap);text-align:center;padding:6px 0;}
 .pic-hint{font-size:12px;color:var(--cap);text-align:center;margin-bottom:12px;}
-.pic-btn{width:100%;height:48px;border-radius:24px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:700;transition:opacity .2s;}
+.pic-btn{width:100%;height:48px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:700;transition:opacity .2s;}
 .pic-btn:disabled{opacity:.35;cursor:default;}
 
 /* Car card */
@@ -107,7 +107,7 @@ input,textarea,select{font-family:inherit;}
 .shop-badge{display:inline-flex;align-items:center;gap:3px;background:var(--primary-light);color:var(--primary);font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;}
 .shop-addr{font-size:13px;color:var(--sub);margin-bottom:6px;line-height:1.4;}
 .shop-meta{display:flex;gap:12px;font-size:12px;color:var(--cap);}
-.shop-select-btn{margin-top:12px;width:100%;height:48px;border:none;border-radius:24px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;display:none;}
+.shop-select-btn{margin-top:12px;width:100%;height:48px;border:none;border-radius:12px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;display:none;}
 .shop-more{text-align:center;padding:6px 0;font-size:13px;color:var(--primary);font-weight:600;cursor:pointer;margin-top:4px;}
 
 /* Reserve card */
@@ -123,25 +123,25 @@ input,textarea,select{font-family:inherit;}
 .ic-field{margin-bottom:14px;}
 .ic-field label{display:block;font-size:12px;color:var(--cap);font-weight:600;margin-bottom:6px;}
 .ic-row{display:flex;gap:8px;}
-.ic-row input{flex:1;height:46px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;outline:none;color:var(--text);transition:border-color .2s;}
-.ic-row input:focus{border-color:var(--primary);}
-.ic-row input.verified{border-color:var(--success);}
-.ic-row .ic-send{flex-shrink:0;height:46px;padding:0 14px;border-radius:10px;border:1.5px solid var(--primary);background:#fff;color:var(--primary);font-size:13px;font-weight:600;white-space:nowrap;transition:background .15s;}
+.ic-row input{flex:1;height:46px;border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:15px;outline:none;color:var(--text);transition:border-color .2s;}
+.ic-row input:focus{border-color:var(--border);}
+.ic-row input.verified{border-color:var(--border);}
+.ic-row .ic-send{flex-shrink:0;height:46px;padding:0 14px;border-radius:12px;border:1.5px solid var(--primary);background:#fff;color:var(--primary);font-size:13px;font-weight:600;white-space:nowrap;transition:background .15s;}
 .ic-row .ic-send:active{background:var(--primary-light);}
 .ic-timer{font-size:12px;color:var(--cap);margin-left:2px;}
 .ic-msg{font-size:12px;margin-top:6px;line-height:1.4;}
 .ic-msg.ok{color:var(--success);}
 .ic-msg.err{color:var(--error);}
 .ic-msg.info{color:var(--primary);}
-.ic-submit{width:100%;height:48px;border-radius:24px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:700;margin-top:4px;transition:opacity .2s;}
+.ic-submit{width:100%;height:48px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:700;margin-top:4px;transition:opacity .2s;}
 .ic-submit:disabled{opacity:.35;cursor:default;}
 
 /* ── Inline request form (UX-02) ── */
 .iq-form{margin:4px 0 14px 0;background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.06);animation:msgUp .35s cubic-bezier(.16,1,.3,1);}
-.iq-ta{width:100%;min-height:90px;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-size:14px;outline:none;resize:none;color:var(--body);background:var(--surface);line-height:1.5;transition:border-color .2s;}
-.iq-ta:focus{border-color:var(--primary);background:#fff;}
+.iq-ta{width:100%;min-height:90px;border:1.5px solid var(--border);border-radius:12px;padding:12px;font-size:14px;outline:none;resize:none;color:var(--body);background:var(--surface);line-height:1.5;transition:border-color .2s;}
+.iq-ta:focus{border-color:var(--border);background:#fff;}
 .iq-cnt{text-align:right;font-size:11px;color:var(--cap);margin-top:4px;margin-bottom:12px;}
-.iq-submit{width:100%;height:48px;border-radius:24px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:700;}
+.iq-submit{width:100%;height:48px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:700;}
 
 /* ── Completion card (UX-08) ── */
 .comp-card{margin:4px 0 14px 0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1);animation:msgUp .35s cubic-bezier(.16,1,.3,1);}
@@ -160,7 +160,7 @@ input,textarea,select{font-family:inherit;}
 /* Satisfaction */
 .sat-wrap{margin:8px 0 14px 0;background:#fff;border-radius:14px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05);animation:msgUp .35s cubic-bezier(.16,1,.3,1);}
 .sat-wrap p{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;}
-.sat-link{display:inline-block;padding:10px 28px;border-radius:20px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;text-decoration:none;border:none;cursor:pointer;}
+.sat-link{display:inline-block;padding:10px 28px;border-radius:12px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;text-decoration:none;border:none;cursor:pointer;}
 
 /* ── Bottom sheet ── */
 .ov{position:fixed;inset:0;background:var(--overlay);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
@@ -173,14 +173,14 @@ input,textarea,select{font-family:inherit;}
 .sheet-hd p{font-size:13px;color:var(--sub);margin-top:4px;line-height:1.5;}
 .sheet-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 20px 10px;}
 .sheet-ft{flex-shrink:0;padding:12px 20px;padding-bottom:calc(12px + var(--safe-b));}
-.sheet-ft button{width:100%;height:50px;border-radius:25px;border:none;background:var(--primary);color:#fff;font-size:16px;font-weight:700;}
+.sheet-ft button{width:100%;height:50px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:16px;font-weight:700;}
 .sheet-ft button:disabled{background:#D5D5D5;cursor:default;}
 .sheet-ft button:active:not(:disabled){background:var(--primary-dark);}
 
 /* Region chips (UX-07: 42px touch target) */
 .rg-title{font-size:15px;font-weight:700;color:var(--text);margin:8px 0 12px;}
 .chips{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
-.chip{height:42px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid transparent;border-radius:8px;font-size:13px;color:#555;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;position:relative;}
+.chip{height:42px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid transparent;border-radius:12px;font-size:13px;color:#555;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;position:relative;}
 .chip:active{transform:scale(.95);}
 .chip.on{background:var(--primary);color:#fff;font-weight:600;}
 .rg-other{padding:14px 0;font-size:14px;font-weight:600;color:var(--sub);border-bottom:1px solid var(--divider);display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
@@ -191,9 +191,10 @@ input,textarea,select{font-family:inherit;}
 .ct-field label{display:block;font-size:12px;color:var(--cap);margin-bottom:6px;font-weight:600;}
 .ct-row{display:flex;gap:8px;}
 .ct-row input,
-.ct-row select{flex:1;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;outline:none;color:var(--text);}
-.ct-row input:focus{border-color:var(--primary);}
-.ct-row button{flex-shrink:0;height:44px;padding:0 14px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-size:13px;font-weight:600;white-space:nowrap;}
+.ct-row select{flex:1;height:44px;border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:15px;outline:none;color:var(--text);}
+.ct-row input:focus,
+.ct-row select:focus{border-color:var(--border);}
+.ct-row button{flex-shrink:0;height:44px;padding:0 14px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:13px;font-weight:600;white-space:nowrap;}
 
 /* ── Simplified terms (UX-03) ── */
 .terms-all{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--primary-light);border-radius:12px;margin-bottom:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;border:2px solid transparent;transition:border-color .2s;}
@@ -222,7 +223,7 @@ input,textarea,select{font-family:inherit;}
 .exit-dialog h4{font-size:17px;font-weight:700;color:var(--text);margin-bottom:10px;}
 .exit-dialog p{font-size:13px;color:var(--sub);line-height:1.65;margin-bottom:22px;}
 .exit-btns{display:flex;gap:8px;}
-.exit-btns button{flex:1;height:46px;border-radius:23px;border:none;font-size:14px;font-weight:600;cursor:pointer;}
+.exit-btns button{flex:1;height:46px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;}
 .exit-cancel{background:var(--surface);color:var(--body);}
 .exit-confirm{background:var(--primary);color:#fff;}
 
@@ -262,22 +263,22 @@ input,textarea,select{font-family:inherit;}
       <div class="ct-row"><input id="vehPlate" style="background:var(--surface);"><button>재조회</button></div>
     </div>
     <div class="ct-field"><label>차량명</label>
-      <input id="vehName" placeholder="예: 셀토스" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;outline:none;">
+      <input id="vehName" placeholder="예: 셀토스" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:15px;outline:none;">
     </div>
     <div class="ct-field"><label>차량 종류</label>
-      <select id="vehClass" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;background:#fff;outline:none;color:var(--body);">
+      <select id="vehClass" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:15px;background:#fff;outline:none;color:var(--body);">
         <option value="">선택해 주세요</option>
         <option>승용</option><option>SUV(RV)</option><option>승합</option><option>화물</option>
       </select>
     </div>
     <div class="ct-field"><label>엔진 크기(cc)</label>
-      <select id="selCC" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;background:#fff;outline:none;color:var(--body);">
+      <select id="selCC" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:15px;background:#fff;outline:none;color:var(--body);">
         <option value="">선택해 주세요</option>
         <option>1600 미만</option><option>1600 ~ 1999</option><option>2000 ~ 2499</option><option>2500 ~ 2999</option><option>3000 이상</option>
       </select>
     </div>
     <div class="ct-field"><label>출고 시기</label>
-      <select id="selYear" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;background:#fff;outline:none;color:var(--body);">
+      <select id="selYear" style="width:100%;height:44px;border:1.5px solid var(--border);border-radius:12px;padding:0 12px;font-size:15px;background:#fff;outline:none;color:var(--body);">
         <option value="">선택해 주세요</option>
         <option value="recent">2018년 이후 출고</option>
         <option value="old">2018년 이전 출고</option>
@@ -780,7 +781,7 @@ async function startFlow(){
   await wait(400);
   const hw=document.createElement('div');hw.className='m-action';hw.style.justifyContent='center';
   const hb=document.createElement('button');hb.textContent='종료하기';
-  hb.style.cssText='background:#fff;color:var(--primary);border:1.5px solid var(--primary);';
+  hb.style.cssText='background:#fff;color:var(--primary);border:1.5px solid var(--primary);border-radius:12px;';
   hb.addEventListener('click',()=>location.reload());
   hw.appendChild(hb);chatEl().appendChild(hw);scrollEnd();
 }
