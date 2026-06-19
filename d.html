@@ -6,6 +6,8 @@
 <title>DB손해보험 셀프클레임</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Pretendard 웹폰트 -->
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
 <!-- Google Material Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 <!-- Noto Color Emoji: 로컬 환경 이모지 깨짐 방지 -->
@@ -24,14 +26,11 @@
 .icon-md   { font-size: 20px; }
 .icon-lg   { font-size: 24px; }
 
-/* 이모지 컬러 렌더링 보장 — 로컬 환경 깨짐 방지 */
-.btn-emoji { font-family: "Noto Color Emoji", Apple Color Emoji, Segoe UI Emoji, sans-serif; font-size: 15px; line-height: 1; }
+/* 이모지 컬러 렌더링 보장 */
+.btn-emoji { font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-size: 15px; line-height: 1; }
 
-/* 전역 이모지 텍스트 렌더링 강제 */
+/* 전역 텍스트 렌더링 */
 * { -webkit-text-rendering: optimizeLegibility; text-rendering: optimizeLegibility; }
-.bot-bubble, .user-bubble, .qc-btn, .action-pill, .region-chip {
-  font-variant-emoji: emoji;
-}
 
 :root {
   --primary:     #007f41;
@@ -60,14 +59,8 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body {
-  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   background: #d0d0d0; display: flex; justify-content: center; min-height: 100vh;
-}
-/* 이모지만 Noto Color Emoji로 처리 */
-@font-face {
-  font-family: 'EmojiFont';
-  src: local('Apple Color Emoji'), local('Segoe UI Emoji'), local('Noto Color Emoji');
-  unicode-range: U+1F000-1FAFF, U+2600-27BF, U+FE00-FE0F, U+1F900-1F9FF;
 }
 
 /* ── 전체 래퍼: app + 사이드 nav ── */
@@ -191,11 +184,12 @@ body {
 .bot-bubble {
   background: var(--gray-6);
   border-radius: 4px var(--r-bubble) var(--r-bubble) var(--r-bubble);
-  /* 좌우 16px, 위아래 12px, 최대 너비 280px — 공통 규격 */
   padding: 12px 16px;
-  font-size: 15px; line-height: 1.5; /* 150% */
+  font-size: 15px; line-height: 1.5;
   letter-spacing: var(--tracking); color: var(--text);
-  max-width: 280px; word-break: keep-all;
+  max-width: 280px;
+  word-break: break-word;    /* keep-all 제거 — 숫자/특수문자 줄바꿈 방지 */
+  overflow-wrap: break-word;
   animation: bubbleIn 180ms ease both;
 }
 @keyframes bubbleIn {
@@ -243,9 +237,9 @@ body {
   border-radius: var(--r-bubble) 4px var(--r-bubble) var(--r-bubble);
   /* 좌우 16px, 위아래 12px, 최대 너비 280px — bot-bubble과 동일 규격 */
   padding: 12px 16px;
-  font-size: 15px; line-height: 1.5; /* 150% */
+  font-size: 15px; line-height: 1.5;
   letter-spacing: var(--tracking);
-  max-width: 280px; word-break: keep-all;
+  max-width: 280px; word-break: break-word; overflow-wrap: break-word;
   animation: userIn 180ms ease both;
 }
 @keyframes userIn {
@@ -834,7 +828,13 @@ function typeInto(bubble, html, speed) {
     bubble.appendChild(cursor);
     let tIdx = 0, cIdx = 0;
     function tick() {
-      if (tIdx >= tokens.length) { cursor.remove(); resolve(); return; }
+      if (tIdx >= tokens.length) {
+        cursor.remove();
+        // 개별 TextNode를 하나로 병합 → 숫자 간격 깨짐 방지
+        bubble.normalize();
+        resolve();
+        return;
+      }
       const tok = tokens[tIdx];
       if (tok.t === 'tag') {
         const isClose = tok.v.startsWith('</');
@@ -1212,18 +1212,9 @@ function submitCode() {
   // 재발송 버튼 제거
   document.getElementById('resend-btn')?.remove();
 
-  // 입력창 숨기고 원래 상태 완전 복구
+  // 입력창 숨기고 원래 상태 복구
   document.getElementById('input-bar').style.display = 'none';
-  input.type = 'text';
-  input.inputMode = '';
-  input.pattern = '';
-  input.maxLength = 524288;
-  input.placeholder = '차량번호를 입력해 주세요.';
-  input.value = '';
-  input.oninput = onPlateInput;
-  input.onkeydown = (e) => { if(e.key==='Enter') sendPlate(); };
-  document.getElementById('send-btn').onclick = sendPlate;
-  document.getElementById('send-btn').disabled = true;
+  resetInputBar();
 
   S.phoneVerified = true;
   userMsg(val);
@@ -1472,8 +1463,8 @@ function renderShopList() {
 function resetInputBar() {
   const input = document.getElementById('chat-input');
   input.type = 'text';
-  input.inputMode = '';
-  input.pattern = '';
+  input.removeAttribute('inputmode');
+  input.removeAttribute('pattern');
   input.maxLength = 524288;
   input.placeholder = '차량번호를 입력해 주세요.';
   input.value = '';
