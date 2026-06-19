@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>DB손해보험 셀프클레임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Google Material Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 <!-- Noto Color Emoji: 로컬 환경 이모지 깨짐 방지 -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 <style>
@@ -24,6 +26,12 @@
 
 /* 이모지 컬러 렌더링 보장 — 로컬 환경 깨짐 방지 */
 .btn-emoji { font-family: "Noto Color Emoji", Apple Color Emoji, Segoe UI Emoji, sans-serif; font-size: 15px; line-height: 1; }
+
+/* 전역 이모지 텍스트 렌더링 강제 */
+* { -webkit-text-rendering: optimizeLegibility; text-rendering: optimizeLegibility; }
+.bot-bubble, .user-bubble, .qc-btn, .action-pill, .region-chip {
+  font-variant-emoji: emoji;
+}
 
 :root {
   --primary:     #007f41;
@@ -52,8 +60,14 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body {
-  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Noto Color Emoji",sans-serif;
+  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
   background: #d0d0d0; display: flex; justify-content: center; min-height: 100vh;
+}
+/* 이모지만 Noto Color Emoji로 처리 */
+@font-face {
+  font-family: 'EmojiFont';
+  src: local('Apple Color Emoji'), local('Segoe UI Emoji'), local('Noto Color Emoji');
+  unicode-range: U+1F000-1FAFF, U+2600-27BF, U+FE00-FE0F, U+1F900-1F9FF;
 }
 
 /* ── 전체 래퍼: app + 사이드 nav ── */
@@ -551,9 +565,6 @@ input[type=number] { -moz-appearance: textfield; }
   </button>
   <button class="step-pill" onclick="jumpTo(7)">
     <span class="material-symbols-rounded">garage</span>수리점
-  </button>
-  <button class="step-pill" onclick="jumpTo(8)">
-    <span class="material-symbols-rounded">check_circle</span>완료
   </button>
 </nav>
 </div>
